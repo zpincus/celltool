@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/scipy/!svn/ver/4154/trunk/scipy/io/matlab
+END
+mio4.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/scipy/!svn/ver/4154/trunk/scipy/io/matlab/mio4.py
+END
+mio5.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/scipy/!svn/ver/3932/trunk/scipy/io/matlab/mio5.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/scipy/!svn/ver/3758/trunk/scipy/io/matlab/__init__.py
+END
+miobase.py
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/scipy/!svn/ver/3931/trunk/scipy/io/matlab/miobase.py
+END
+setup.py
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/scipy/!svn/ver/3963/trunk/scipy/io/matlab/setup.py
+END
+mio.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/scipy/!svn/ver/3758/trunk/scipy/io/matlab/mio.py
+END
