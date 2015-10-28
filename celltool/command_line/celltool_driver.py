@@ -8,7 +8,7 @@
 """Run commands from the celltool suite.
 """
 
-from celltool.utility import optparse
+import optparse
 import sys
 import cli_tools
 from celltool.utility import warn_tools

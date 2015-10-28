@@ -38,7 +38,7 @@ default for the align_contours command). Alternately, the starting and ending
 points can be specified directly.
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.utility import path
 import cli_tools

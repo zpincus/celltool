@@ -11,7 +11,7 @@ The files will be saved with the same name as the contour files in the
 specified directory.
 
 """
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.utility import path
 import cli_tools

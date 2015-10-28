@@ -9,7 +9,7 @@ import traceback
 import sys
 import exceptions
 from celltool.utility import warn_tools
-from celltool.utility import optparse
+import optparse
 import numpy
 import glob
 import os

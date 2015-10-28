@@ -33,7 +33,7 @@ variance in the data set. This threshold can be manually set, though the default
 of 0.95 works well.
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.contour import contour_class
 from celltool.utility import datafile

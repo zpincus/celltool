@@ -43,7 +43,7 @@ maximization' algorithm.) Iteration terminates when no contours change (or
 after ten iterations, whichever comes first).
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.utility import path
 from celltool.contour import contour_class

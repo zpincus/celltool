@@ -36,7 +36,7 @@ order, use the '-r' or '--order-match flag'.
 In both cases, the resulting image file is named the same as the contour.
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.utility import path
 import cli_tools

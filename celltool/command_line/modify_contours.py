@@ -13,7 +13,7 @@ If the contours have landmark points, these points can be re-weighted by this
 tool. (See the documentation for add_landmarks for more details.)
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.utility import path
 import cli_tools

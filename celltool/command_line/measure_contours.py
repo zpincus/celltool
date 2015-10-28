@@ -113,7 +113,7 @@ with the find_centerlines tool):
             available options.
 """
 
-from celltool.utility import optparse
+import optparse
 import sys
 from celltool import simple_interface
 from celltool.utility import warn_tools

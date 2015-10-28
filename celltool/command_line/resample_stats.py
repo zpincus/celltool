@@ -49,7 +49,7 @@ datasets is due to chance alone. The columns/rows of the output are named by
 the filenames of the input datasets.
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool.utility import path
 from celltool.utility import datafile
 from celltool.utility import warn_tools

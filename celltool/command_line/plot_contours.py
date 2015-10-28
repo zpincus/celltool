@@ -12,7 +12,7 @@ Optionally, the contours can be colored by their point ordering, to allow a
 visual inspection of the point correspondences between the contours.
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool.plot import plot_tools
 from celltool import simple_interface
 import cli_tools

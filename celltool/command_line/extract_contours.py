@@ -32,7 +32,7 @@ there were multiple contours for a given image, then a number will be appended
 to the image name.
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.utility import path
 import cli_tools

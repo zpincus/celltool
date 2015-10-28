@@ -32,7 +32,7 @@ sets, use something like: ... data.csv --range 1 100 "top cells" --range 101
 200 "bottom cells" ... note that ranges must be named so that they can be
 disambiguated. """
 
-from celltool.utility import optparse
+import optparse
 from celltool.plot import plot_tools
 from celltool.utility import path
 from celltool.contour import contour_class
