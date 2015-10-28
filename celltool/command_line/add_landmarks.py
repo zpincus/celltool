@@ -1,6 +1,6 @@
 # Copyright 2007 Zachary Pincus
 # This file is part of CellTool.
-# 
+#
 # CellTool is free software; you can redistribute it and/or modify
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
@@ -9,19 +9,19 @@
 
 In some cases, the contour outline alone is insufficient to properly align
 certain shapes. The alignment procedure can be aided by adding a set of
-explicit landmark points to the contours. 
+explicit landmark points to the contours.
 
 Landmark points for each contour are read from images. This is so that it is
 possible to generate the landmark points manually by paining over images, or
 automatically with thresholding or some other image processing step. Different
-landmarks are differentiated by different pixel intensity values, so that it 
+landmarks are differentiated by different pixel intensity values, so that it
 is possible to add multiple landmarks from one image.
 
-Given a pixel intensity range, an image, and a contour, the position of the 
+Given a pixel intensity range, an image, and a contour, the position of the
 landmarks are found as follows:
     - Find the region in the image that corresponds to the interior of the
         contour. If the images provided are in the same orientation as those from
-        which the contours were originally derived, this works automatically. 
+        which the contours were originally derived, this works automatically.
         However, if the images were extracted with the extract_images tool (or are
         derived from images so extracted), it is necessary to specify this fact by
         setting the '-a' or '--aligned-images' flag.
@@ -35,21 +35,21 @@ landmarks!), then these will be used in the alignment procedure.
 
 Finally, it is possible to weight the landmarks, to control the relative
 influence of each landmark versus the others, and versus the contour points.
-Weights are specified with the '-w' option. If there is no weight specified, 
+Weights are specified with the '-w' option. If there is no weight specified,
 then the landmarks (in aggregate) will share half of the total weight; the
 other half will be shared by the contour points. If there is one '-w' value
-specified, then the landmarks will share that fraction of the total weight, 
+specified, then the landmarks will share that fraction of the total weight,
 and the points the remaining amount. (Thus the '-w' value must be <= 1.) If
 multiple '-w' values are provided, then there must be exactly as many weights
 as landmarks; moreover, the sum of the weights must be <= 1.
 
 Landmarks can be specified as either a single pixel-intensity values or as two
-values, which are treated as an inclusive [low, high] intensity interval. To 
+values, which are treated as an inclusive [low, high] intensity interval. To
 add a landmark of the former type, use the '-l' or '--landmark' option; for
 the latter use the '-i' or '--landmark-interval' option.
 
 For this tool to work with multiple images and contours, it must be able to
-match images to contour files. This can be accomplished in two ways: 
+match images to contour files. This can be accomplished in two ways:
 
 (1) By name: An image is matched to a contour file if their names match
 exactly, except for the file extensions and an optional trailing
@@ -64,7 +64,7 @@ order, use the '-r' or '--order-match flag'.
 In both cases, the resulting image file is named the same as the contour.
 """
 
-from celltool.utility import optparse
+import optparse
 from celltool import simple_interface
 from celltool.utility import path
 import cli_tools
@@ -82,13 +82,13 @@ parser.set_defaults(
 )
 parser.add_option('-q', '--quiet', action='store_false', dest='show_progress',
     help='suppress progress bars and other status updates')
-parser.add_option('-l', '--landmark', action='append', dest='intensity_ranges', 
+parser.add_option('-l', '--landmark', action='append', dest='intensity_ranges',
     type='int', metavar='INTENSITY',
     help='find pixels with values equal to INTENSITY and treat their centroid as a landmark')
-parser.add_option('-i', '--landmark-interval', action='append', dest='intensity_ranges', 
+parser.add_option('-i', '--landmark-interval', action='append', dest='intensity_ranges',
     type='int', nargs=2, metavar='LOW HIGH',
     help='find pixels with values in [LOW, HIGH] and treat their centroid as a landmark')
-parser.add_option('-w', '--weight', action='append', dest='weights', 
+parser.add_option('-w', '--weight', action='append', dest='weights',
     type='float', metavar='WEIGHT',
     help='set the weight shared by all contours to WEIGHT (if specified once), or set the weight of the nth landmark to WEIGHT (if specified multiply)')
 parser.add_option('-r', '--order-match', action='store_false', dest='match_by_name',
@@ -117,7 +117,7 @@ def main(name, arguments):
         raise optparse.OptionValueError("Either one or %d weights are required; %d sepcified."%(len(intensity_ranges), len(options.weights)))
     elif sum(options.weights) > 1:
         raise optparse.OptionValueError("The sum of the weights must be <= 1.")
-    
+
     matches = match_files.match_contours_and_images(args, options.match_by_name, options.show_progress)
     contours, image_names, unmatched_contours, unmatched_image_names = matches
     filenames = [path.path(contour._filename) for contour in contours]
