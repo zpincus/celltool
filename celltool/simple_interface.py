@@ -47,7 +47,7 @@ def save_contours(contours, filenames, show_progress = False):
         c.to_file(n)
 
 def save_contour_data_for_matlab(contours, filenames, show_progress = False):
-    from celltool.utility import matlab_io
+    from scipy import io
     contours_and_names = list(zip(contours, filenames))
     if show_progress:
         contours_and_names = progress_list(contours_and_names, 'Saving Matlab Files', lambda c_and_n: c_and_n[1])
@@ -58,7 +58,7 @@ def save_contour_data_for_matlab(contours, filenames, show_progress = False):
             value = getattr(c, attribute)
             if isinstance(value, (numpy.ndarray, float, int)):
                 contour_data[attribute] = value
-        matlab_io.savemat(n, contour_data, appendmat=True, format='5')
+        io.savemat(n, contour_data, appendmat=True, format='5')
 
 
 def extract_contours(filenames, contour_value = None, min_area = None, max_area = None, show_progress = False):
