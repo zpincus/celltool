@@ -16,7 +16,7 @@ tool. (See the documentation for add_landmarks for more details.)
 import optparse
 from celltool import simple_interface
 from celltool.utility import path
-import cli_tools
+from . import cli_tools
 
 usage = "usage: %prog [options] contour_1 ... contour_n"
 
@@ -55,7 +55,7 @@ def main(name, arguments):
     if options.scale is not None or options.rotate is not None or options.units is not None or options.first_point is not None:
         in_radians = False
         if options.units is not None and options.units.lower() in ('um', 'micron', 'microns'):
-            options.units = u'\N{MICRO SIGN}m'
+            options.units = '\N{MICRO SIGN}m'
         contours = simple_interface.transform_contours(contours, options.scale, options.rotate, in_radians, 
             options.units, options.first_point, options.show_progress, title = 'Modifying Contours')
     if options.weights is not None:

@@ -23,7 +23,7 @@ shape modes are indexed from one (e.g. a 3-mode contour has modes 1, 2, and
 import optparse
 from celltool.plot import plot_tools
 from celltool.contour import contour_class
-import cli_tools
+from . import cli_tools
 
 usage = "usage: %prog [options] shape_model_file"
 

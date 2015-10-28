@@ -6,7 +6,7 @@
 # published by the Free Software Foundation.
 
 import bisect, numpy
-import utility_tools
+from . import utility_tools
 
 def pca(data):
     """pca(data, axis) -> mean, pcs, norm_pcs, variances, positions, norm_positions

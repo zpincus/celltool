@@ -37,7 +37,7 @@ import optparse
 from celltool import simple_interface
 from celltool.contour import contour_class
 from celltool.utility import datafile
-import cli_tools
+from . import cli_tools
 
 usage = "usage: %prog [options] contour_1 ... contour_n"
 

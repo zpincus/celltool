@@ -39,8 +39,8 @@ In both cases, the resulting image file is named the same as the contour.
 import optparse
 from celltool import simple_interface
 from celltool.utility import path
-import cli_tools
-import match_files
+from . import cli_tools
+from . import match_files
 
 usage = "usage: %prog [options] image_or_contour_1 ... image_or_contour_n"
 

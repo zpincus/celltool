@@ -21,7 +21,7 @@ def debug_handler(function, *args, **kws):
         ret = function(*args, **kws)
         warn_tools.end_queue()
         return ret
-    except Exception, e:
+    except Exception as e:
         if isinstance(e, exceptions.SystemExit):
             raise e
         warn_tools.end_queue()
@@ -34,12 +34,12 @@ def quiet_handler(function, *args, **kws):
         ret = function(*args, **kws)
         warn_tools.end_queue()
         return ret
-    except Exception, e:
+    except Exception as e:
         warn_tools.end_queue()
         if isinstance(e, exceptions.SystemExit):
             raise e
         type, value, tb = sys.exc_info()
-        print ''.join(traceback.format_exception_only(type, value))
+        print(''.join(traceback.format_exception_only(type, value)))
         sys.exit(1)
 
 class CelltoolFormatter(optparse.TitledHelpFormatter):

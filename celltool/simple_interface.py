@@ -40,7 +40,7 @@ def save_contours(contours, filenames, show_progress = False):
         - filenames: a list of file names for the contour files.
         - show_progress: display a simple progress bar during this process.
     """
-    contours_and_names = zip(contours, filenames)
+    contours_and_names = list(zip(contours, filenames))
     if show_progress:
         contours_and_names = progress_list(contours_and_names, 'Saving Contour Files', lambda c_and_n: c_and_n[1])
     for c, n in contours_and_names:
@@ -48,15 +48,15 @@ def save_contours(contours, filenames, show_progress = False):
 
 def save_contour_data_for_matlab(contours, filenames, show_progress = False):
     from celltool.utility import matlab_io
-    contours_and_names = zip(contours, filenames)
+    contours_and_names = list(zip(contours, filenames))
     if show_progress:
         contours_and_names = progress_list(contours_and_names, 'Saving Matlab Files', lambda c_and_n: c_and_n[1])
     for c, n in contours_and_names:
-        contour_attributes = c._instance_data.keys()
+        contour_attributes = list(c._instance_data.keys())
         contour_data = {}
         for attribute in contour_attributes:
             value = getattr(c, attribute)
-            if isinstance(value, (numpy.ndarray, float, int, long)):
+            if isinstance(value, (numpy.ndarray, float, int)):
                 contour_data[attribute] = value
         matlab_io.savemat(n, contour_data, appendmat=True, format='5')
 
@@ -397,7 +397,7 @@ def reorient_images(contours, image_names, new_names, pad_factor = 1.2, mask = T
     # Put the contours into pixel units so that when we transform the images,
     # they aren't resized up or down to whatever the contour units are...
     contours = [c.as_descaled() for c in contours]
-    contours_and_images = zip(contours, image_names, new_names)
+    contours_and_images = list(zip(contours, image_names, new_names))
     if show_progress:
         contours_and_images = progress_list(contours_and_images, 'Reorienting Images', lambda c_n_nn: c_n_nn[1])
     bboxes = [c.bounding_box() for c in contours]
@@ -425,7 +425,7 @@ def make_masks(contours, new_names, pad_factor = 1.2, inside = 255, outside = 0,
     from celltool.utility import image
     # Put the contours into pixel units
     contours = [c.as_descaled() for c in contours]
-    contours_and_names = zip(contours, new_names)
+    contours_and_names = list(zip(contours, new_names))
     if show_progress:
         contours_and_names = progress_list(contours_and_names, 'Making Image Masks', lambda c_n: c_n[0]._filename)
     bboxes = [c.bounding_box() for c in contours]
@@ -472,7 +472,7 @@ def add_image_landmarks_to_contours(contours, image_names, landmark_ranges, land
     if image_type not in ('original', 'aligned'):
         raise RuntimeError("Image type %s is invalid. Must be 'original' or 'aligned'."%image_type)
     _caching_reader.prime(image_names)
-    contours_and_images = zip(contours, image_names)
+    contours_and_images = list(zip(contours, image_names))
     if show_progress:
         contours_and_images = progress_list(contours_and_images, 'Adding Landmarks from Image', lambda c_n: c_n[0]._filename)
     landmark_contours = []
@@ -730,7 +730,7 @@ class AxisDiameters(object):
                 raise TypeError("A contour with a central axis defined is required for this measurement")
         if not utility_tools.all_same_shape([c.central_axis for c in contours]):
             raise RuntimeError('All contours must have the same number of points along their central axes to make diameter measurements.')
-        point_range = range(len(contours[0].central_axis))
+        point_range = list(range(len(contours[0].central_axis)))
         if self.end:
             point_range = point_range[:self.end+1]
         if self.begin:
@@ -753,7 +753,7 @@ class ShapeModeMeasurement(object):
         """
         self.shape_model = contour_class.from_file(shape_model_file, contour_class.PCAContour)
         if not modes:
-            modes = range(1, len(self.shape_model.modes) + 1)
+            modes = list(range(1, len(self.shape_model.modes) + 1))
         self.modes = modes
         self.normalized = normalized
         for m in modes:
@@ -855,7 +855,7 @@ class SwathMeasurement(_ImageMeasurementBase):
         elif self.mode == 'length_profile':
             if not utility_tools.all_same_shape([c.points for c in contours]):
                 raise RuntimeError('All contours must have the same number of points to make swath measurements.')
-            point_range = utility_tools.inclusive_periodic_slice(range(len(contours[0].points)), self.begin, self.end)
+            point_range = utility_tools.inclusive_periodic_slice(list(range(len(contours[0].points))), self.begin, self.end)
             return ['%s (point %d)' %(self.measurement_name, p+1) for p in point_range]
         else:
             return ['%s (mean)' %self.measurement_name]
@@ -924,7 +924,7 @@ class AxisSwathMeasurement(_ImageMeasurementBase):
         elif self.mode == 'length_profile':
             if not utility_tools.all_same_shape([c.central_axis for c in contours]):
                 raise RuntimeError('All contours must have the same number of points along their central axes to make swath measurements.')
-            point_range = range(len(contours[0].central_axis))
+            point_range = list(range(len(contours[0].central_axis)))
             if self.end:
                 point_range = point_range[:self.end+1]
             if self.begin:

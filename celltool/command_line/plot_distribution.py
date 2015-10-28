@@ -39,7 +39,7 @@ from celltool.contour import contour_class
 from celltool.utility import datafile
 from celltool.utility import warn_tools
 from celltool.utility import terminal_tools
-import cli_tools
+from . import cli_tools
 import numpy
 
 def handle_range(option, opt_str, value, parser):
@@ -198,7 +198,7 @@ def get_data(data_files):
             new_data_files.append(df)
             if header is None: start = 0
             else: start = 1
-            row_ranges.append(range(1+start, len(data.data)+start))
+            row_ranges.append(list(range(1+start, len(data.data)+start)))
         else:
             for low, high, name in ranges:
                 try:
@@ -208,7 +208,7 @@ def get_data(data_files):
                     raise ValueError('Cannot get row range (%d, %d) from data file "%s" -- not enough rows?')
                 data_names.append(name)
                 new_data_files.append(df)
-                row_ranges.append(range(low, high+1))
+                row_ranges.append(list(range(low, high+1)))
     return headers, data_ranges, data_names, new_data_files, row_ranges
 
 def get_contour_groups(data_ranges, contours, data_files, row_ranges, name_column, x_column, y_column):

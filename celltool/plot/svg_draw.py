@@ -235,7 +235,7 @@ class SVGelement:
         self.text=text
         self.namespace=namespace
         self.cdata=cdata
-        for arg in list(args.keys()):
+        for arg in args.keys():
             self.attributes[arg]=args[arg]
     def addElement(self,SVGelement):
         """adds an element to a SVGelement
@@ -298,7 +298,7 @@ class tspan(SVGelement):
             self.text=text
     def __repr__(self):
         s="<tspan"
-        for key,value in list(self.attributes.items()):
+        for key,value in self.attributes.items():
          s+= ' %s="%s"' % (key,value)
         s+='>'
         s+=self.text
@@ -320,7 +320,7 @@ class tref(SVGelement):
     def __repr__(self):
         s="<tref"
 
-        for key,value in list(self.attributes.items()):
+        for key,value in self.attributes.items():
          s+= ' %s="%s"' % (key,value)
         s+='/>'
         return s
@@ -944,7 +944,7 @@ class drawing:
                 if element.text:
                     textnode=root.createTextNode(element.text)
                     e.appendChild(textnode)
-                for attribute in list(element.attributes.keys()):   #in element.attributes is supported from python 2.2
+                for attribute in element.attributes.keys():   #in element.attributes is supported from python 2.2
                     e.setAttribute(attribute,str(element.attributes[attribute]))
                 if element.elements:
                     for el in element.elements:

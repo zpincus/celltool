@@ -55,7 +55,7 @@ from celltool.utility import datafile
 from celltool.utility import warn_tools
 from celltool.utility import terminal_tools
 from celltool.numerics import ks_resample
-import cli_tools
+from . import cli_tools
 import numpy
 
 

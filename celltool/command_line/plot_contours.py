@@ -15,7 +15,7 @@ visual inspection of the point correspondences between the contours.
 import optparse
 from celltool.plot import plot_tools
 from celltool import simple_interface
-import cli_tools
+from . import cli_tools
 
 usage = "usage: %prog [options] contour_1 ... contour_n"
 

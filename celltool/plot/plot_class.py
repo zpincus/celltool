@@ -5,7 +5,7 @@
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
 
-import svg_draw
+from . import svg_draw
 import numpy
 import copy
 

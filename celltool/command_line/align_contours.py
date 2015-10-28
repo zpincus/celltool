@@ -1,6 +1,6 @@
 # Copyright 2007 Zachary Pincus
 # This file is part of CellTool.
-# 
+#
 # CellTool is free software; you can redistribute it and/or modify
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
@@ -47,7 +47,7 @@ import optparse
 from celltool import simple_interface
 from celltool.utility import path
 from celltool.contour import contour_class
-import cli_tools
+from . import cli_tools
 
 usage = "usage: %prog [options] contour_1 ... contour_n"
 
@@ -83,7 +83,7 @@ def main(name, arguments):
     contours = simple_interface.load_contours(filenames, show_progress = options.show_progress)
     if options.reference is not None:
         reference = contour_class.from_file(options.reference)
-        contours = simple_interface.align_contours_to(contours, reference, align_steps=options.alignment_steps, 
+        contours = simple_interface.align_contours_to(contours, reference, align_steps=options.alignment_steps,
             allow_reflection=options.allow_reflection, show_progress=options.show_progress)
     else:
         contours = simple_interface.align_contours(contours, options.alignment_steps, options.allow_reflection,

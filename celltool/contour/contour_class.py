@@ -210,7 +210,7 @@ class PointSet(object):
         file_contents = '\n'.join(file_contents)
         try:
             f = open(filename, 'w')
-        except Exception, e:
+        except Exception as e:
             raise IOError('Could not open file "%s" for saving. (Error: %s)'%(filename, e))
         f.write(file_contents)
         f.close()
@@ -345,7 +345,7 @@ class Contour(PointSet):
             unpack = True
             derivatives = [derivatives]
         tck, uout = self.to_spline()
-        points = utility_tools.inclusive_periodic_slice(range(len(self.points)), begin, end)
+        points = utility_tools.inclusive_periodic_slice(list(range(len(self.points))), begin, end)
         ret = [numpy.transpose(fitpack.splev(points, tck, der=d)) for d in derivatives]
         if unpack:
             ret = ret[0]
@@ -1336,7 +1336,7 @@ class CentralAxisContour(Contour):
             unpack = True
             derivatives = [derivatives]
         tck, uout = self.axis_to_spline()
-        ret = [numpy.transpose(fitpack.splev(range(begin, end), tck, der=d)) for d in derivatives]
+        ret = [numpy.transpose(fitpack.splev(list(range(begin, end)), tck, der=d)) for d in derivatives]
         if unpack:
             ret = ret[0]
         return ret
@@ -1491,7 +1491,7 @@ def from_file(filename, force_class=None):
     data = {}
     original_class = None
     try:
-        execfile(filename, numpy.__dict__, data)
+        exec(compile(open(filename).read(), filename, 'exec'), numpy.__dict__, data)
         data = _compatibility_filter_data(data, force_class)
         module, class_name = data['cls']
         original_class = getattr(__import__(module, None, None, [class_name]), class_name)
@@ -1503,7 +1503,7 @@ def from_file(filename, force_class=None):
         c = original_class(other = data)
         c._filename = filename
         return c
-    except Exception, e:
+    except Exception as e:
         if isinstance(e, exceptions.KeyboardInterrupt):
             raise e
         if original_class is not None:

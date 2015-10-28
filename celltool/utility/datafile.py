@@ -12,7 +12,7 @@ the presence of a header row can be automatically detected.
 """
 
 import csv
-import StringIO
+import io
 import types
 import re
 import numpy
@@ -84,9 +84,9 @@ class DataFile(object):
         f.close()
         dialect = csv.Sniffer().sniff(self.lines, ['\t', ',', ';', ' '])
         if delimiter:
-            reader = csv.reader(StringIO.StringIO(self.lines), dialect, delimiter = delimiter)
+            reader = csv.reader(io.StringIO(self.lines), dialect, delimiter = delimiter)
         else:
-            reader = csv.reader(StringIO.StringIO(self.lines), dialect)
+            reader = csv.reader(io.StringIO(self.lines), dialect)
         self.data = []
         self.types = []
         for row in reader:
@@ -100,7 +100,7 @@ class DataFile(object):
             l = len(data_row)
             if l < max_len:
                 data_row.extend([None]*(max_len - l))
-                type_row.extend([types.NoneType]*(max_len - l))
+                type_row.extend([type(None)]*(max_len - l))
     
     def _coerce(self, row):
         """Coerce a list of strings to a list of numeric types, and return (coerced_values, coerced_types).
@@ -125,7 +125,7 @@ class DataFile(object):
                 continue
             elif elem == '':
                 coerced_values.append(None)
-                coerced_types.append(types.NoneType)
+                coerced_types.append(type(None))
                 continue
             coerced = False
             for this_type in self.type_hierarchy:

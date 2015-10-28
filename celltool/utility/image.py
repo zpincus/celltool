@@ -10,7 +10,7 @@
 
 import freeimage
 import numpy
-import warn_tools
+from . import warn_tools
 
 
 def read_grayscale_array_from_image_file(filename, warn = True):

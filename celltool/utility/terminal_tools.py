@@ -12,8 +12,8 @@ import sys, re, types
 class TerminalController:
     """
     A class that can be used to portably generate formatted output to
-    a terminal.    
-    
+    a terminal.
+
     `TerminalController` defines a set of instance variables whose
     values are initialized to the control sequence necessary to
     perform a given action.    These can be simply included in normal
@@ -73,11 +73,11 @@ class TerminalController:
 
     # Foreground colors:
     BLACK = BLUE = GREEN = CYAN = RED = MAGENTA = YELLOW = WHITE = ''
-    
+
     # Background colors:
     BG_BLACK = BG_BLUE = BG_GREEN = BG_CYAN = ''
     BG_RED = BG_MAGENTA = BG_YELLOW = BG_WHITE = ''
-    
+
     _STRING_CAPABILITIES = """
     BOL=cr UP=cuu1 DOWN=cud1 LEFT=cub1 RIGHT=cuf1
     CLEAR_SCREEN=clear CLEAR_EOL=el CLEAR_BOL=el1 CLEAR_EOS=ed BOLD=bold
@@ -109,7 +109,7 @@ class TerminalController:
         # Look up numeric capabilities.
         self.COLS = curses.tigetnum('cols')
         self.LINES = curses.tigetnum('lines')
-        
+
         # Look up string capabilities.
         for capability in self._STRING_CAPABILITIES:
             (attrib, cap_name) = capability.split('=')
@@ -118,19 +118,19 @@ class TerminalController:
         # Colors
         set_fg = self._tigetstr('setf')
         if set_fg:
-            for i,color in zip(range(len(self._COLORS)), self._COLORS):
+            for i,color in enumerate(self._COLORS):
                 setattr(self, color, curses.tparm(set_fg, i) or '')
         set_fg_ansi = self._tigetstr('setaf')
         if set_fg_ansi:
-            for i,color in zip(range(len(self._ANSICOLORS)), self._ANSICOLORS):
+            for i,color in enumerate(self._ANSICOLORS):
                 setattr(self, color, curses.tparm(set_fg_ansi, i) or '')
         set_bg = self._tigetstr('setb')
         if set_bg:
-            for i,color in zip(range(len(self._COLORS)), self._COLORS):
+            for i,color in enumerate(self._COLORS):
                 setattr(self, 'BG_'+color, curses.tparm(set_bg, i) or '')
         set_bg_ansi = self._tigetstr('setab')
         if set_bg_ansi:
-            for i,color in zip(range(len(self._ANSICOLORS)), self._ANSICOLORS):
+            for i,color in enumerate(self._ANSICOLORS):
                 setattr(self, 'BG_'+color, curses.tparm(set_bg_ansi, i) or '')
 
     def _tigetstr(self, cap_name):
@@ -158,7 +158,7 @@ class TerminalController:
 class ProgressBar:
     """
     A 3-line progress bar, which looks like::
-    
+
                                 Header
         20% [==========>----------------------------------]
                              progress message
@@ -168,7 +168,7 @@ class ProgressBar:
     """
     BAR = '%3d%% ${GREEN}[${BOLD}%s%s%s${NORMAL}${GREEN}]${NORMAL}\n'
     HEADER = '${BOLD}${BLUE}%s${NORMAL}\n\n'
-        
+
     def __init__(self, header, term = None):
         if term is None:
             term = TerminalController()
@@ -177,7 +177,7 @@ class ProgressBar:
          self.update = self.simple_update
          sys.stdout.write(header + '\n')
         else:
-            self.update = self.fancy_update         
+            self.update = self.fancy_update
             self.width = self.term.COLS or 75
             self.bar = term.render(self.BAR)
             self.header = self.term.render(self.HEADER % header.center(self.width))
@@ -186,7 +186,7 @@ class ProgressBar:
 
     def simple_update(self, percent, message):
         sys.stdout.write('[%3d%%] %s\n' %(100*percent, message))
-            
+
     def fancy_update(self, percent, message):
         if len(message) > self.width:
             message = '...' + message[len(message) - self.width + 5:]
@@ -209,10 +209,10 @@ class ProgressBar:
 
 def progress_list(input_list, header, element_namer = lambda x: x):
     """Return a generator which can be used to iterate through input_list, displaying a percentage-completion progress bar.
-    
+
     The header-line for the progress bar must be specified in 'header'. Optionally,
     an 'element_namer' function can be provided to return a string (or something that
-    can be meaningfully converted to a string) to provide a name for the given 
+    can be meaningfully converted to a string) to provide a name for the given
     list element, which is displayed on the progress bar's status line. For example,
     if input_list is a list of (name, value) pairs, providing 'lambda x: x[0]' will
     allow only the 'name' element of each tuple to be printed.
@@ -227,7 +227,7 @@ def progress_list(input_list, header, element_namer = lambda x: x):
 class IndeterminantProgressBar:
     """
     A 3-line progress bar, which looks like::
-    
+
                                 Header
         [-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=]
                              progress message
@@ -247,7 +247,7 @@ class IndeterminantProgressBar:
          self.update = self.simple_update
          sys.stdout.write(header + '\n')
         else:
-            self.update = self.fancy_update         
+            self.update = self.fancy_update
             self.width = self.term.COLS or 75
             self.bar = term.render(self.BAR)
             self.header = self.term.render(self.HEADER % header.center(self.width))

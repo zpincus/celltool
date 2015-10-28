@@ -71,12 +71,12 @@ def _get_contours_and_images(filenames, show_progress = True):
         try:
             freeimage.read_metadata(filename)
             image_names.append(filename)
-        except IOError, e:
+        except IOError as e:
             # print e
             # print Image.ID
             try:
                 contours.append(contour_class.from_file(filename))
-            except IOError, e:
+            except IOError as e:
                 # print e
                 raise ValueError('Could not open file "%s" as an image or a contour.'%filename)
     return contours, image_names

@@ -10,10 +10,10 @@
 
 import optparse
 import sys
-import cli_tools
+from . import cli_tools
 from celltool.utility import warn_tools
-import plugins
-from celltool_commands import celltool_commands
+from . import plugins
+from .celltool_commands import celltool_commands
 
 usage = "usage: %prog [options] command [arguments and options for 'command']"
 
@@ -50,8 +50,8 @@ def print_help(name, short = True):
         command_module = __import__(full_name, {}, {}, ['parser'])
         command_parser = command_module.parser
         command_parser.prog = ' '.join([name, command])
-        print command+":"
-        print '    '+command_parser.description.split('\n')[0]
+        print(command+":")
+        print('    '+command_parser.description.split('\n')[0])
     parser.exit(2)
 
 if __name__ == '__main__':

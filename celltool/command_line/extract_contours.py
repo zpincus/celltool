@@ -35,7 +35,7 @@ to the image name.
 import optparse
 from celltool import simple_interface
 from celltool.utility import path
-import cli_tools
+from . import cli_tools
 
 usage = "usage: %prog [options] image_1 ... image_n"
 
@@ -102,7 +102,7 @@ def main(name, arguments):
         # if not rescaling, contours are already denominated in pixels, so do nothing.
         units = options.units
         if units.lower() in ('um', 'micron', 'microns'):
-            units = u'\N{MICRO SIGN}m'
+            units = '\N{MICRO SIGN}m'
         contours = simple_interface.transform_contours(contours, scale_factor=options.scale, 
             units=units, show_progress=options.show_progress, title='Rescaling Contours')
     if options.resample:

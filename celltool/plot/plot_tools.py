@@ -9,8 +9,8 @@ import bisect
 import numpy
 from scipy.stats import kde
 
-import plot_class
-import svg_draw
+from . import plot_class
+from . import svg_draw
 from celltool.contour import contour_class
 from celltool.numerics import utility_tools
 from celltool.utility import warn_tools
@@ -526,7 +526,7 @@ def _kde_range(kd_estimators, data_ranges, zero_threshold):
         max_hl = _kde_height_list(e, max+range, max, 1024)
         maxes.append(max_hl.position_at_index(bisect.bisect(max_hl, zero_threshold)))
     numpy.seterr(**err)
-    return numpy.min(mins), numpy.max(maxes), zip(mins, maxes)
+    return numpy.min(mins), numpy.max(maxes), list(zip(mins, maxes))
 
 def pca_modes_plot(pca_contour, filename, modes = None, positions = None,
         gradient_factory = default_gradient, scalebar = True, scale = None):
@@ -619,10 +619,10 @@ def pca_modes_plot(pca_contour, filename, modes = None, positions = None,
         ids.append('position-%s'%p)
         plot.style.add_selector('[id~="position-%s"]'%p, stroke=color_func(p))
         if p == 0:
-            names.append(u'mean')
+            names.append('mean')
             #names.append(u'\N{GREEK SMALL LETTER MU}')
         else:
-            names.append(u'%d s.d.'%p)
+            names.append('%d s.d.'%p)
             #names.append(u'%d\N{GREEK SMALL LETTER SIGMA}'%p)
     if scalebar:
         _add_scalebar(plot, pca_contour.units)
@@ -753,7 +753,7 @@ def point_order_plot(contours, filename, plot_title = None, label_points = True,
     if not utility_tools.all_same_shape([c.points for c in contours]):
         raise ValueError('All contours must have the same number of points.')
     units = _check_units(contours)
-    point_range = utility_tools.inclusive_periodic_slice(range(len(contours[0].points)), begin, end)
+    point_range = utility_tools.inclusive_periodic_slice(list(range(len(contours[0].points))), begin, end)
     num_points = len(point_range)
     contours = [contour.as_recentered() for contour in contours]
     bounds = _find_bounds(contours)
@@ -791,7 +791,7 @@ def point_order_plot(contours, filename, plot_title = None, label_points = True,
         plot.style.add_selector('path.data.range', stroke_width='2.5', fill='none', stroke='black', stroke_linecap='round')
         if landmarks:
             plot.style.add_selector('circle.data.landmark', fill='black')
-    svg_groups = [_gradient_contour(plot, contour, begin, end, range(num_points), color_func) for contour in contours_prog]
+    svg_groups = [_gradient_contour(plot, contour, begin, end, list(range(num_points)), color_func) for contour in contours_prog]
     if begin is not None or end is not None:
         plot.style.add_selector('path.data.fullpath', stroke_width='0.5', fill='none', stroke='darkgray')
     contour_layer = plot.make_layer('contours')
@@ -934,7 +934,7 @@ def _add_scalebar(plot, units, scale = None, x=30, y=None):
     plot.add_scalebar(x, y, scaled_length, ticheight, text, _FONT_SIZE_SMALL)
 
 def _add_point_labels(plot, contours, begin, end):
-    point_range = utility_tools.inclusive_periodic_slice(range(len(contours[0].points)), begin, end)
+    point_range = utility_tools.inclusive_periodic_slice(list(range(len(contours[0].points))), begin, end)
     num_points = len(point_range)
     index_tics, labels, smalltics = plot_class._make_tics(0, num_points - 1, num_smalltics = 0)
     if begin is not None and end is not None:

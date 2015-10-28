@@ -12,5 +12,5 @@ celltool libraries for performing statistical analysis on shapes from images.
 Written by: Zachary Pincus
 '''
 
-import numerics
-import utility
+from . import numerics
+from . import utility

@@ -41,7 +41,7 @@ points can be specified directly.
 import optparse
 from celltool import simple_interface
 from celltool.utility import path
-import cli_tools
+from . import cli_tools
 
 usage = "usage: %prog [options] contour_1 ... contour_n"
 
