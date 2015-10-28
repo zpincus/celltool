@@ -19,14 +19,14 @@ is possible to add multiple landmarks from one image.
 
 Given a pixel intensity range, an image, and a contour, the position of the 
 landmarks are found as follows:
-  - Find the region in the image that corresponds to the interior of the
-    contour. If the images provided are in the same orientation as those from
-    which the contours were originally derived, this works automatically. 
-    However, if the images were extracted with the extract_images tool (or are
-    derived from images so extracted), it is necessary to specify this fact by
-    setting the '-a' or '--aligned-images' flag.
-  - Within that region, find all of the pixels that fall into the intensity
-    range. The landmark is defined as the geometric centroid of these pixels.
+    - Find the region in the image that corresponds to the interior of the
+        contour. If the images provided are in the same orientation as those from
+        which the contours were originally derived, this works automatically. 
+        However, if the images were extracted with the extract_images tool (or are
+        derived from images so extracted), it is necessary to specify this fact by
+        setting the '-a' or '--aligned-images' flag.
+    - Within that region, find all of the pixels that fall into the intensity
+        range. The landmark is defined as the geometric centroid of these pixels.
 
 Once one or more landmarks have been read from an image, they are associated
 with the contour file that is then written out. If all of the contour files
@@ -73,65 +73,65 @@ import match_files
 usage = "usage: %prog [options] image_or_contour_1 ... image_or_contour_n"
 
 parser = optparse.OptionParser(usage=usage, description=__doc__.strip(),
-  formatter=cli_tools.CelltoolFormatter())
+    formatter=cli_tools.CelltoolFormatter())
 parser.set_defaults(
-  show_progress=True,
-  match_by_name=True,
-  image_type='original',
-  destination='.'
+    show_progress=True,
+    match_by_name=True,
+    image_type='original',
+    destination='.'
 )
 parser.add_option('-q', '--quiet', action='store_false', dest='show_progress',
-  help='suppress progress bars and other status updates')
+    help='suppress progress bars and other status updates')
 parser.add_option('-l', '--landmark', action='append', dest='intensity_ranges', 
-  type='int', metavar='INTENSITY',
-  help='find pixels with values equal to INTENSITY and treat their centroid as a landmark')
+    type='int', metavar='INTENSITY',
+    help='find pixels with values equal to INTENSITY and treat their centroid as a landmark')
 parser.add_option('-i', '--landmark-interval', action='append', dest='intensity_ranges', 
-  type='int', nargs=2, metavar='LOW HIGH',
-  help='find pixels with values in [LOW, HIGH] and treat their centroid as a landmark')
+    type='int', nargs=2, metavar='LOW HIGH',
+    help='find pixels with values in [LOW, HIGH] and treat their centroid as a landmark')
 parser.add_option('-w', '--weight', action='append', dest='weights', 
-  type='float', metavar='WEIGHT',
-  help='set the weight shared by all contours to WEIGHT (if specified once), or set the weight of the nth landmark to WEIGHT (if specified multiply)')
+    type='float', metavar='WEIGHT',
+    help='set the weight shared by all contours to WEIGHT (if specified once), or set the weight of the nth landmark to WEIGHT (if specified multiply)')
 parser.add_option('-r', '--order-match', action='store_false', dest='match_by_name',
-  help='match contours to images by their order on the command line [default: match by name]')
+    help='match contours to images by their order on the command line [default: match by name]')
 parser.add_option('-a', '--aligned-images', action='store_const', const='aligned', dest='image_type',
-  help='set if images have been aligned with extract_images [default: images are assumed to be oriented as the original contours were]')
+    help='set if images have been aligned with extract_images [default: images are assumed to be oriented as the original contours were]')
 parser.add_option('-d', '--destination', metavar='DIRECTORY',
-  help='directory in which to write the output contours [default: %default]')
+    help='directory in which to write the output contours [default: %default]')
 
 def main(name, arguments):
-  parser.prog = name
-  options, args = parser.parse_args(arguments)
-  args = cli_tools.glob_args(args)
-  if len(args) == 0:
-    raise ValueError('Some contour and image files must be specified!')
-  intensity_ranges = []
-  for r in options.intensity_ranges:
-    try:
-      low, high = r
-    except:
-      low = high = r
-    intensity_ranges.append([low, high])
-  if options.weights is None or len(options.weights) == 0:
-    options.weights = [0.5]
-  elif len(options.weights) != 1 and len(options.weights) != len(intensity_ranges):
-    raise optparse.OptionValueError("Either one or %d weights are required; %d sepcified."%(len(intensity_ranges), len(options.weights)))
-  elif sum(options.weights) > 1:
-    raise optparse.OptionValueError("The sum of the weights must be <= 1.")
-  
-  matches = match_files.match_contours_and_images(args, options.match_by_name, options.show_progress)
-  contours, image_names, unmatched_contours, unmatched_image_names = matches
-  filenames = [path.path(contour._filename) for contour in contours]
-  contours = simple_interface.add_image_landmarks_to_contours(contours, image_names,
-    intensity_ranges, options.weights, options.image_type, options.show_progress)
-  destination = path.path(options.destination)
-  if not destination.exists():
-    destination.makedirs()
-  # note that with path objects, the '/' operator means 'join path components.'
-  names = [destination / filename.name for filename in filenames]
-  simple_interface.save_contours(contours, names, options.show_progress)
+    parser.prog = name
+    options, args = parser.parse_args(arguments)
+    args = cli_tools.glob_args(args)
+    if len(args) == 0:
+        raise ValueError('Some contour and image files must be specified!')
+    intensity_ranges = []
+    for r in options.intensity_ranges:
+        try:
+            low, high = r
+        except:
+            low = high = r
+        intensity_ranges.append([low, high])
+    if options.weights is None or len(options.weights) == 0:
+        options.weights = [0.5]
+    elif len(options.weights) != 1 and len(options.weights) != len(intensity_ranges):
+        raise optparse.OptionValueError("Either one or %d weights are required; %d sepcified."%(len(intensity_ranges), len(options.weights)))
+    elif sum(options.weights) > 1:
+        raise optparse.OptionValueError("The sum of the weights must be <= 1.")
+    
+    matches = match_files.match_contours_and_images(args, options.match_by_name, options.show_progress)
+    contours, image_names, unmatched_contours, unmatched_image_names = matches
+    filenames = [path.path(contour._filename) for contour in contours]
+    contours = simple_interface.add_image_landmarks_to_contours(contours, image_names,
+        intensity_ranges, options.weights, options.image_type, options.show_progress)
+    destination = path.path(options.destination)
+    if not destination.exists():
+        destination.makedirs()
+    # note that with path objects, the '/' operator means 'join path components.'
+    names = [destination / filename.name for filename in filenames]
+    simple_interface.save_contours(contours, names, options.show_progress)
 
 
 if __name__ == '__main__':
-  import sys
-  import os
-  main(os.path.basename(sys.argv[0]), sys.argv[1:])
+    import sys
+    import os
+    main(os.path.basename(sys.argv[0]), sys.argv[1:])

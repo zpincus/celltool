@@ -45,46 +45,46 @@ import match_files
 usage = "usage: %prog [options] image_or_contour_1 ... image_or_contour_n"
 
 parser = optparse.OptionParser(usage=usage, description=__doc__.strip(),
-  formatter=cli_tools.CelltoolFormatter())
+    formatter=cli_tools.CelltoolFormatter())
 parser.set_defaults(
-  show_progress=True,
-  match_by_name=True,
-  mask_background=False,
-  destination='.',
-  pad_factor=1.1
+    show_progress=True,
+    match_by_name=True,
+    mask_background=False,
+    destination='.',
+    pad_factor=1.1
 )
 parser.add_option('-q', '--quiet', action='store_false', dest='show_progress',
-  help='suppress progress bars and other status updates')
+    help='suppress progress bars and other status updates')
 parser.add_option('-r', '--order-match', action='store_false', dest='match_by_name',
-  help='match contours to images by their order on the command line [default: match by name]')
+    help='match contours to images by their order on the command line [default: match by name]')
 parser.add_option('-m', '--mask-background', action='store_true',
-  help='set the image intensity outside of the contour to zero')
+    help='set the image intensity outside of the contour to zero')
 parser.add_option('-p', '--pad-factor', metavar='VALUE', type='float',
-  help='the fractional amount of extra padding around the largest contour to include in the images [default: %default]')
+    help='the fractional amount of extra padding around the largest contour to include in the images [default: %default]')
 parser.add_option('-f', '--file-type', choices=('tif', 'tiff', 'png'), metavar='TYPE',
-  help='image type to write out (tiff or png; if not specified use type of input image)')
+    help='image type to write out (tiff or png; if not specified use type of input image)')
 parser.add_option('-d', '--destination', metavar='DIRECTORY',
-  help='directory in which to write the output contours [default: %default]')
+    help='directory in which to write the output contours [default: %default]')
 
 def main(name, arguments):
-  parser.prog = name
-  options, args = parser.parse_args(arguments)
-  args = cli_tools.glob_args(args)
-  if len(args) == 0:
-    raise ValueError('Some contour and image files must be specified!')
-  matches = match_files.match_contours_and_images(args, options.match_by_name, options.show_progress)
-  contours, image_names, unmatched_contours, unmatched_image_names = matches
-  destination = path.path(options.destination)
-  if not destination.exists():
-    destination.makedirs()
-  if options.file_type is not None:
-    new_names = [destination / contour.simple_name() + '.' + options.file_type for contour in contours]
-  else:
-    new_names = [destination / contour.simple_name() + image.ext for image, contour in zip(image_names, contours)]
-  simple_interface.reorient_images(contours, image_names, new_names, pad_factor=options.pad_factor, 
-    mask=options.mask_background, show_progress=options.show_progress)
+    parser.prog = name
+    options, args = parser.parse_args(arguments)
+    args = cli_tools.glob_args(args)
+    if len(args) == 0:
+        raise ValueError('Some contour and image files must be specified!')
+    matches = match_files.match_contours_and_images(args, options.match_by_name, options.show_progress)
+    contours, image_names, unmatched_contours, unmatched_image_names = matches
+    destination = path.path(options.destination)
+    if not destination.exists():
+        destination.makedirs()
+    if options.file_type is not None:
+        new_names = [destination / contour.simple_name() + '.' + options.file_type for contour in contours]
+    else:
+        new_names = [destination / contour.simple_name() + image.ext for image, contour in zip(image_names, contours)]
+    simple_interface.reorient_images(contours, image_names, new_names, pad_factor=options.pad_factor, 
+        mask=options.mask_background, show_progress=options.show_progress)
 
 if __name__ == '__main__':
-  import sys
-  import os
-  main(os.path.basename(sys.argv[0]), sys.argv[1:])
+    import sys
+    import os
+    main(os.path.basename(sys.argv[0]), sys.argv[1:])

@@ -21,55 +21,55 @@ import cli_tools
 usage = "usage: %prog [options] contour_1 ... contour_n"
 
 parser = optparse.OptionParser(usage=usage, description=__doc__.strip(),
-  formatter=cli_tools.CelltoolFormatter())
+    formatter=cli_tools.CelltoolFormatter())
 parser.set_defaults(
-  show_progress=True,
-  destination='.'
+    show_progress=True,
+    destination='.'
 )
 parser.add_option('-q', '--quiet', action='store_false', dest='show_progress',
-  help='suppress progress bars and other status updates')
+    help='suppress progress bars and other status updates')
 parser.add_option('-r', '--rotate', type='float', metavar='ANGLE',
-  help='rotate each contour counter-clockwise by ANGLE (in degrees)')
+    help='rotate each contour counter-clockwise by ANGLE (in degrees)')
 parser.add_option('-s', '--scale', action='store', type='float', metavar='FACTOR',
-  help='rescale the contours by multiplicative FACTOR')
+    help='rescale the contours by multiplicative FACTOR')
 parser.add_option('-u', '--units', action='store',
-  help='name of the (new) units for the contours')
+    help='name of the (new) units for the contours')
 parser.add_option('-f', '--first-point', type='int', metavar='POINT',
-  help='make point number POINT the new first point in the contour points')
+    help='make point number POINT the new first point in the contour points')
 parser.add_option('-w', '--weight', action='append', dest='weights', 
-  type='float', metavar='WEIGHT',
-  help='set the weight shared by all contours to WEIGHT (if specified once), or set the weight of the nth landmark to WEIGHT (if specified multiply)')
+    type='float', metavar='WEIGHT',
+    help='set the weight shared by all contours to WEIGHT (if specified once), or set the weight of the nth landmark to WEIGHT (if specified multiply)')
 parser.add_option('-d', '--destination', metavar='DIRECTORY',
-  help='directory in which to write the output contours [default: %default]')
+    help='directory in which to write the output contours [default: %default]')
 
 def main(name, arguments):
-  parser.prog = name
-  options, args = parser.parse_args(arguments)
-  args = cli_tools.glob_args(args)
-  if len(args) == 0:
-    raise ValueError('Some contour files must be specified!')
-  filenames = [path.path(arg) for arg in args]
-  contours = simple_interface.load_contours(filenames, show_progress = options.show_progress)
-  if options.first_point is not None:
-    options.first_point -= 1
-  if options.scale is not None or options.rotate is not None or options.units is not None or options.first_point is not None:
-    in_radians = False
-    if options.units is not None and options.units.lower() in ('um', 'micron', 'microns'):
-      options.units = u'\N{MICRO SIGN}m'
-    contours = simple_interface.transform_contours(contours, options.scale, options.rotate, in_radians, 
-      options.units, options.first_point, options.show_progress, title = 'Modifying Contours')
-  if options.weights is not None:
-    contours = simple_interface.reweight_landmarks(contours, options.weights, options.show_progress)
+    parser.prog = name
+    options, args = parser.parse_args(arguments)
+    args = cli_tools.glob_args(args)
+    if len(args) == 0:
+        raise ValueError('Some contour files must be specified!')
+    filenames = [path.path(arg) for arg in args]
+    contours = simple_interface.load_contours(filenames, show_progress = options.show_progress)
+    if options.first_point is not None:
+        options.first_point -= 1
+    if options.scale is not None or options.rotate is not None or options.units is not None or options.first_point is not None:
+        in_radians = False
+        if options.units is not None and options.units.lower() in ('um', 'micron', 'microns'):
+            options.units = u'\N{MICRO SIGN}m'
+        contours = simple_interface.transform_contours(contours, options.scale, options.rotate, in_radians, 
+            options.units, options.first_point, options.show_progress, title = 'Modifying Contours')
+    if options.weights is not None:
+        contours = simple_interface.reweight_landmarks(contours, options.weights, options.show_progress)
+        
     
-  
-  destination = path.path(options.destination)
-  if not destination.exists():
-    destination.makedirs()
-  # note that with path objects, the '/' operator means 'join path components.'
-  names = [destination / filename.name for filename in filenames]
-  simple_interface.save_contours(contours, names, options.show_progress)
+    destination = path.path(options.destination)
+    if not destination.exists():
+        destination.makedirs()
+    # note that with path objects, the '/' operator means 'join path components.'
+    names = [destination / filename.name for filename in filenames]
+    simple_interface.save_contours(contours, names, options.show_progress)
 
 if __name__ == '__main__':
-  import sys
-  import os
-  main(os.path.basename(sys.argv[0]), sys.argv[1:])
+    import sys
+    import os
+    main(os.path.basename(sys.argv[0]), sys.argv[1:])

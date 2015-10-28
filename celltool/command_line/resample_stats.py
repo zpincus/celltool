@@ -62,91 +62,91 @@ import numpy
 usage = "usage: %prog [options] data_column [--reference=]data_file_1 ... data_file_n"
 
 parser = optparse.OptionParser(usage=usage, description=__doc__.strip(),
-  formatter=cli_tools.CelltoolFormatter())
+    formatter=cli_tools.CelltoolFormatter())
 parser.set_defaults(
-  show_progress=True,
-  output_file='p_values.csv',
-  n=100000,
-  reference=[]
+    show_progress=True,
+    output_file='p_values.csv',
+    n=100000,
+    reference=[]
 )
 parser.add_option('-q', '--quiet', action='store_false', dest='show_progress',
-  help='suppress progress bars and other status updates')
+    help='suppress progress bars and other status updates')
 parser.add_option('-n', '--num-resamplings', dest='n', type='int', metavar='NUM',
-  help='Number of resamplings to be performed to generate each null distribution [default: %default]')
+    help='Number of resamplings to be performed to generate each null distribution [default: %default]')
 parser.add_option('-r', '--reference', action='append',
-  help='make the following data file one of the references [default: no references means all-pairs mode is used]')
+    help='make the following data file one of the references [default: no references means all-pairs mode is used]')
 parser.add_option('-o', '--output-file', metavar='FILE',
-  help='CSV file to write [default: %default]')
+    help='CSV file to write [default: %default]')
 
 def main(name, arguments):
-  parser.prog = name
-  options, args = parser.parse_args(arguments)
-  args = cli_tools.glob_args(args)
-  reference = cli_tools.glob_args(options.reference)
-  
-  if (len(args) < 2) or (len(args) + len(reference) < 3):
-    raise ValueError('A data column and at least two datasets (at least one of which must not be a reference) must be provided!')
-  
-  data_column, datasets = args[0], args[1:]
-  
-  # if the data column is convertible to an integer, do so and 
-  # then convert from 1-indexed to 0-indexed
-  try:
-    data_column = int(data_column)
-    data_column -= 1
-  except:
-    pass
+    parser.prog = name
+    options, args = parser.parse_args(arguments)
+    args = cli_tools.glob_args(args)
+    reference = cli_tools.glob_args(options.reference)
+    
+    if (len(args) < 2) or (len(args) + len(reference) < 3):
+        raise ValueError('A data column and at least two datasets (at least one of which must not be a reference) must be provided!')
+    
+    data_column, datasets = args[0], args[1:]
+    
+    # if the data column is convertible to an integer, do so and 
+    # then convert from 1-indexed to 0-indexed
+    try:
+        data_column = int(data_column)
+        data_column -= 1
+    except:
+        pass
 
-  if options.show_progress:
-    datasets = terminal_tools.progress_list(datasets, "Reading input data")    
-  names, pops = read_files(datasets, data_column)
-  if options.show_progress and len(reference) > 0:
-    reference = terminal_tools.progress_list(reference, "Reading reference data")
-  ref_names, ref_pops = read_files(reference, data_column)
-  
-  if options.show_progress:
-    pb = terminal_tools.IndeterminantProgressBar("Resampling data")
-  if len(ref_pops) > 0:
-    pvals = ks_resample.compare_to_ref(pops, ref_pops, options.n)
-    if len(ref_names) > 1:
-      ref_name = 'reference (%s)' %(', '.join(ref_names))
-    else:
-      ref_name = ref_names[0]
-    rows = [[None, 'difference from %s'%ref_name]]
-    for name, p in zip(names, pvals):
-      rows.append([name, format_pval(p, options.n)])
-  else: # no ref pops
-    pvals = ks_resample.symmetric_comparison(pops, options.n)
-    rows = [[None] + names]
-    for i, (name, p_row) in enumerate(zip(names, pvals)):
-      rows.append([name] + [format_pval(p, options.n) for p in p_row])
-      rows[-1][i+1] = None # empty out the self-self comparison diagonal
-  
-  datafile.write_data_file(rows, options.output_file)  
-  
+    if options.show_progress:
+        datasets = terminal_tools.progress_list(datasets, "Reading input data")        
+    names, pops = read_files(datasets, data_column)
+    if options.show_progress and len(reference) > 0:
+        reference = terminal_tools.progress_list(reference, "Reading reference data")
+    ref_names, ref_pops = read_files(reference, data_column)
+    
+    if options.show_progress:
+        pb = terminal_tools.IndeterminantProgressBar("Resampling data")
+    if len(ref_pops) > 0:
+        pvals = ks_resample.compare_to_ref(pops, ref_pops, options.n)
+        if len(ref_names) > 1:
+            ref_name = 'reference (%s)' %(', '.join(ref_names))
+        else:
+            ref_name = ref_names[0]
+        rows = [[None, 'difference from %s'%ref_name]]
+        for name, p in zip(names, pvals):
+            rows.append([name, format_pval(p, options.n)])
+    else: # no ref pops
+        pvals = ks_resample.symmetric_comparison(pops, options.n)
+        rows = [[None] + names]
+        for i, (name, p_row) in enumerate(zip(names, pvals)):
+            rows.append([name] + [format_pval(p, options.n) for p in p_row])
+            rows[-1][i+1] = None # empty out the self-self comparison diagonal
+    
+    datafile.write_data_file(rows, options.output_file)    
+    
 
 def read_files(files, data_column):
-  names = []
-  data_out = []
-  for df in files:
-    names.append(path.path(df).namebase)
-    data = datafile.DataFile(df, skip_empty=False, type_dict={0:str})
-    header, rows = data.get_header_and_data()
-    data_out.append(numpy.array([row[data_column] for row in rows]))
-  return names, data_out
+    names = []
+    data_out = []
+    for df in files:
+        names.append(path.path(df).namebase)
+        data = datafile.DataFile(df, skip_empty=False, type_dict={0:str})
+        header, rows = data.get_header_and_data()
+        data_out.append(numpy.array([row[data_column] for row in rows]))
+    return names, data_out
 
 def format_pval(p, n):
-  precision = int(numpy.ceil(numpy.log10(n)))
-  smallest = 1./n
-  if p < smallest:
-    return '<%.*f'%(precision, smallest)
-  else:
-    return '%.*f'%(precision, p)
+    precision = int(numpy.ceil(numpy.log10(n)))
+    smallest = 1./n
+    if p < smallest:
+        return '<%.*f'%(precision, smallest)
+    else:
+        return '%.*f'%(precision, p)
 
-  
+    
 if __name__ == '__main__':
-  import sys
-  import os
-  main(os.path.basename(sys.argv[0]), sys.argv[1:])
+    import sys
+    import os
+    main(os.path.basename(sys.argv[0]), sys.argv[1:])
 
 

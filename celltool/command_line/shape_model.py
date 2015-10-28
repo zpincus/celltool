@@ -42,36 +42,36 @@ import cli_tools
 usage = "usage: %prog [options] contour_1 ... contour_n"
 
 parser = optparse.OptionParser(usage=usage, description=__doc__.strip(),
-  formatter=cli_tools.CelltoolFormatter())
+    formatter=cli_tools.CelltoolFormatter())
 parser.set_defaults(
-  show_progress=True,
-  variance_explained=0.95,
-  output_prefix='shape-model',
-  write_data=True,
+    show_progress=True,
+    variance_explained=0.95,
+    output_prefix='shape-model',
+    write_data=True,
 )
 parser.add_option('-q', '--quiet', action='store_false', dest='show_progress',
-  help='suppress progress bars and other status updates')
+    help='suppress progress bars and other status updates')
 parser.add_option('-v', '--variance-explained', type='float',
-  help='minimum fraction of total variance explained by the recorded shape modes [default: %default]')
+    help='minimum fraction of total variance explained by the recorded shape modes [default: %default]')
 parser.add_option('-n', '--no-data', action='store_false', dest='write_data',
-  help='do not write out the positions and normalized positions of the contours')
+    help='do not write out the positions and normalized positions of the contours')
 parser.add_option('-o', '--output-prefix', 
-  help='directory and file name prefix for shape model and data files written [default: %default]')
+    help='directory and file name prefix for shape model and data files written [default: %default]')
 
 def main(name, arguments):
-  parser.prog = name
-  options, args = parser.parse_args(arguments)
-  args = cli_tools.glob_args(args)
-  if len(args) == 0:
-    raise ValueError('Some contour files must be specified!')
-  contours = simple_interface.load_contours(args, show_progress = options.show_progress)
-  shape_model, header, rows, norm_header, norm_rows = simple_interface.make_shape_model(contours, options.variance_explained)
-  shape_model.to_file(options.output_prefix + '.contour')
-  if options.write_data:
-    datafile.write_data_file([header]+rows, options.output_prefix + '-positions.csv')
-    datafile.write_data_file([norm_header]+norm_rows, options.output_prefix + '-normalized-positions.csv')
+    parser.prog = name
+    options, args = parser.parse_args(arguments)
+    args = cli_tools.glob_args(args)
+    if len(args) == 0:
+        raise ValueError('Some contour files must be specified!')
+    contours = simple_interface.load_contours(args, show_progress = options.show_progress)
+    shape_model, header, rows, norm_header, norm_rows = simple_interface.make_shape_model(contours, options.variance_explained)
+    shape_model.to_file(options.output_prefix + '.contour')
+    if options.write_data:
+        datafile.write_data_file([header]+rows, options.output_prefix + '-positions.csv')
+        datafile.write_data_file([norm_header]+norm_rows, options.output_prefix + '-normalized-positions.csv')
 
 if __name__ == '__main__':
-  import sys
-  import os
-  main(os.path.basename(sys.argv[0]), sys.argv[1:])
+    import sys
+    import os
+    main(os.path.basename(sys.argv[0]), sys.argv[1:])

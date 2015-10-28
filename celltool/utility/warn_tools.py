@@ -11,27 +11,27 @@ import sys
 _original_showwarning = warnings.showwarning
 
 class CelltoolWarning(UserWarning):
-  pass
+    pass
 
 _warning_queue = []
 
 def _celltool_queuewarning(message, category, filename, lineno, file=sys.stderr):
-  if issubclass(category, CelltoolWarning):
-    _warning_queue.append('Warning: %s\n'%message)
-  else:
-    _original_showwarning(message, category, filename, lineno, file)
+    if issubclass(category, CelltoolWarning):
+        _warning_queue.append('Warning: %s\n'%message)
+    else:
+        _original_showwarning(message, category, filename, lineno, file)
 
 def queue_celltool_warnings():
-  global _warning_queue
-  _warning_queue = []
-  warnings.showwarning = _celltool_queuewarning
+    global _warning_queue
+    _warning_queue = []
+    warnings.showwarning = _celltool_queuewarning
 
 def end_queue():
-  global _warning_queue
-  for warning in _warning_queue:
-    sys.stderr.write(warning)
-  _warning_queue = []
-  warnings.showwarning = _original_showwarning
+    global _warning_queue
+    for warning in _warning_queue:
+        sys.stderr.write(warning)
+    _warning_queue = []
+    warnings.showwarning = _original_showwarning
 
 def warn(message):
-  warnings.warn(message, CelltoolWarning, stacklevel = 2)
+    warnings.warn(message, CelltoolWarning, stacklevel = 2)

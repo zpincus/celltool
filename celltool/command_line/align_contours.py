@@ -24,10 +24,10 @@ informative.) Thus we jointly optimize the point-correspondences between
 contours and their physical alignments.
 
 The general alginment procedure, given a fixed reference is thus:
-  - for several drastically different candidate point orderings:
-      find the best physical alignment of points to the reference
-  - keep the candidate ordering that gives the best overall alignment
-  - directly optimize this candidate ordering
+    - for several drastically different candidate point orderings:
+            find the best physical alignment of points to the reference
+    - keep the candidate ordering that gives the best overall alignment
+    - directly optimize this candidate ordering
 That is, it is a rough global optimization followed by a local optimization.
 
 For simple shapes, a small number of initial candidate orderings will be
@@ -52,50 +52,50 @@ import cli_tools
 usage = "usage: %prog [options] contour_1 ... contour_n"
 
 parser = optparse.OptionParser(usage=usage, description=__doc__.strip(),
-  formatter=cli_tools.CelltoolFormatter())
+    formatter=cli_tools.CelltoolFormatter())
 parser.set_defaults(
-  show_progress=True,
-  allow_reflection=False,
-  alignment_steps=8,
-  max_iterations=10,
-  destination='.'
+    show_progress=True,
+    allow_reflection=False,
+    alignment_steps=8,
+    max_iterations=10,
+    destination='.'
 )
 parser.add_option('-q', '--quiet', action='store_false', dest='show_progress',
-  help='suppress progress bars and other status updates')
+    help='suppress progress bars and other status updates')
 parser.add_option('-a', '--allow-reflection', action='store_true', dest='allow_reflection',
-  help='allow contours to be reflected over some axis if it improves the alignment')
+    help='allow contours to be reflected over some axis if it improves the alignment')
 parser.add_option('-s', '--alignment-steps', type='int', metavar='STEPS',
-  help='number of candidate point orderings to try for each shape during global alignment [default: %default]')
+    help='number of candidate point orderings to try for each shape during global alignment [default: %default]')
 parser.add_option('-m', '--max-iterations', type='int', metavar='ITERS',
-  help='maximum number of iterations for mutual contour alignment [default: %default]')
+    help='maximum number of iterations for mutual contour alignment [default: %default]')
 parser.add_option('-r', '--reference', metavar='CONTOUR',
-  help='reference contour file that other contours will be aligned to (if not specified, contours will be mutually aligned)')
+    help='reference contour file that other contours will be aligned to (if not specified, contours will be mutually aligned)')
 parser.add_option('-d', '--destination', metavar='DIRECTORY',
-  help='directory in which to write the output contours [default: %default]')
+    help='directory in which to write the output contours [default: %default]')
 
 def main(name, arguments):
-  parser.prog = name
-  options, args = parser.parse_args(arguments)
-  args = cli_tools.glob_args(args)
-  if len(args) == 0:
-    raise ValueError('Some contour files must be specified!')
-  filenames = [path.path(arg) for arg in args]
-  contours = simple_interface.load_contours(filenames, show_progress = options.show_progress)
-  if options.reference is not None:
-    reference = contour_class.from_file(options.reference)
-    contours = simple_interface.align_contours_to(contours, reference, align_steps=options.alignment_steps, 
-      allow_reflection=options.allow_reflection, show_progress=options.show_progress)
-  else:
-    contours = simple_interface.align_contours(contours, options.alignment_steps, options.allow_reflection,
-      max_iters=options.max_iterations, show_progress = options.show_progress)
-  destination = path.path(options.destination)
-  if not destination.exists():
-    destination.makedirs()
-  # note that with path objects, the '/' operator means 'join path components.'
-  names = [destination / filename.name for filename in filenames]
-  simple_interface.save_contours(contours, names, options.show_progress)
+    parser.prog = name
+    options, args = parser.parse_args(arguments)
+    args = cli_tools.glob_args(args)
+    if len(args) == 0:
+        raise ValueError('Some contour files must be specified!')
+    filenames = [path.path(arg) for arg in args]
+    contours = simple_interface.load_contours(filenames, show_progress = options.show_progress)
+    if options.reference is not None:
+        reference = contour_class.from_file(options.reference)
+        contours = simple_interface.align_contours_to(contours, reference, align_steps=options.alignment_steps, 
+            allow_reflection=options.allow_reflection, show_progress=options.show_progress)
+    else:
+        contours = simple_interface.align_contours(contours, options.alignment_steps, options.allow_reflection,
+            max_iters=options.max_iterations, show_progress = options.show_progress)
+    destination = path.path(options.destination)
+    if not destination.exists():
+        destination.makedirs()
+    # note that with path objects, the '/' operator means 'join path components.'
+    names = [destination / filename.name for filename in filenames]
+    simple_interface.save_contours(contours, names, options.show_progress)
 
 if __name__ == '__main__':
-  import sys
-  import os
-  main(os.path.basename(sys.argv[0]), sys.argv[1:])
+    import sys
+    import os
+    main(os.path.basename(sys.argv[0]), sys.argv[1:])
