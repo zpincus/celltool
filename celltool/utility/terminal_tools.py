@@ -113,33 +113,33 @@ class TerminalController:
         # Look up string capabilities.
         for capability in self._STRING_CAPABILITIES:
             (attrib, cap_name) = capability.split('=')
-            setattr(self, attrib, self._tigetstr(cap_name) or '')
+            setattr(self, attrib, str(self._tigetstr(cap_name), encoding='ascii'))
 
         # Colors
         set_fg = self._tigetstr('setf')
         if set_fg:
             for i,color in enumerate(self._COLORS):
-                setattr(self, color, curses.tparm(set_fg, i) or '')
+                setattr(self, color, str(curses.tparm(set_fg, i) or b'', encoding='ascii'))
         set_fg_ansi = self._tigetstr('setaf')
         if set_fg_ansi:
             for i,color in enumerate(self._ANSICOLORS):
-                setattr(self, color, curses.tparm(set_fg_ansi, i) or '')
+                setattr(self, color, str(curses.tparm(set_fg_ansi, i) or b'', encoding='ascii'))
         set_bg = self._tigetstr('setb')
         if set_bg:
             for i,color in enumerate(self._COLORS):
-                setattr(self, 'BG_'+color, curses.tparm(set_bg, i) or '')
+                setattr(self, 'BG_'+color, str(curses.tparm(set_bg, i) or b'', encoding='ascii'))
         set_bg_ansi = self._tigetstr('setab')
         if set_bg_ansi:
             for i,color in enumerate(self._ANSICOLORS):
-                setattr(self, 'BG_'+color, curses.tparm(set_bg_ansi, i) or '')
+                setattr(self, 'BG_'+color, str(curses.tparm(set_bg_ansi, i) or b'', encoding='ascii'))
 
     def _tigetstr(self, cap_name):
         # String capabilities can include "delays" of the form "$<2>".
         # For any modern terminal, we should be able to just ignore
         # these, so strip them out.
         import curses
-        cap = curses.tigetstr(cap_name) or ''
-        return re.sub(r'\$<\d+>[/*]?', '', cap)
+        cap = curses.tigetstr(cap_name) or b''
+        return re.sub(rb'\$<\d+>[/*]?', b'', cap)
 
     def render(self, template):
         """
@@ -152,7 +152,7 @@ class TerminalController:
     def _render_sub(self, match):
         s = match.group()
         if s == '$$': return s
-        else: return getattr(self, s[2:-1])
+        else: return str(getattr(self, s[2:-1]))
 
 
 class ProgressBar:
@@ -236,7 +236,7 @@ class IndeterminantProgressBar:
     output; and adjusts to the width of the terminal.
     Each time update is called, the progress bar's pattern shifts.
     """
-    BAR = '         ${GREEN}[${BOLD}%s${NORMAL}${GREEN}]${NORMAL}\n'
+    BAR = '     ${GREEN}[${BOLD}%s${NORMAL}${GREEN}]${NORMAL}\n'
     HEADER = '${BOLD}${BLUE}%s${NORMAL}\n\n'
     SYMBOLS = ['-', '=']
     def __init__(self, header, term = None):

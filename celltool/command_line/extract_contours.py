@@ -83,8 +83,7 @@ def main(name, arguments):
     contours = []
     names = []
     destination = path.path(options.destination)
-    if not destination.exists():
-        destination.makedirs()
+    destination.makedirs_p()
     for contour_group, image_name in zip(contours_groups, filenames):
         num_contours = len(contour_group)
         if num_contours == 1:

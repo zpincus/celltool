@@ -63,8 +63,7 @@ def main(name, arguments):
         
     
     destination = path.path(options.destination)
-    if not destination.exists():
-        destination.makedirs()
+    destination.makedirs_p()
     # note that with path objects, the '/' operator means 'join path components.'
     names = [destination / filename.name for filename in filenames]
     simple_interface.save_contours(contours, names, options.show_progress)

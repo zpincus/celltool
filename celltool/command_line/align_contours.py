@@ -89,8 +89,7 @@ def main(name, arguments):
         contours = simple_interface.align_contours(contours, options.alignment_steps, options.allow_reflection,
             max_iters=options.max_iterations, show_progress = options.show_progress)
     destination = path.path(options.destination)
-    if not destination.exists():
-        destination.makedirs()
+    destination.makedirs_p()
     # note that with path objects, the '/' operator means 'join path components.'
     names = [destination / filename.name for filename in filenames]
     simple_interface.save_contours(contours, names, options.show_progress)

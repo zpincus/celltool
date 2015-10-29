@@ -16,7 +16,7 @@ or for creating and using PCA-based shape models (PCAContour).
 
 import numpy
 import copy
-import exceptions
+
 from celltool.numerics import utility_tools
 from celltool.numerics import procustes
 from celltool.utility import path
@@ -1504,7 +1504,7 @@ def from_file(filename, force_class=None):
         c._filename = filename
         return c
     except Exception as e:
-        if isinstance(e, exceptions.KeyboardInterrupt):
+        if isinstance(e, KeyboardInterrupt):
             raise e
         if original_class is not None:
             raise IOError('Could not load file "%s" as a %s. (Error: %s)'%(filename, original_class.__name__, e))

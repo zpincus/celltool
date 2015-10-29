@@ -1,13 +1,12 @@
 # Copyright 2007 Zachary Pincus
 # This file is part of CellTool.
-# 
+#
 # CellTool is free software; you can redistribute it and/or modify
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
 
 import traceback
 import sys
-import exceptions
 from celltool.utility import warn_tools
 import optparse
 import numpy
@@ -22,7 +21,7 @@ def debug_handler(function, *args, **kws):
         warn_tools.end_queue()
         return ret
     except Exception as e:
-        if isinstance(e, exceptions.SystemExit):
+        if isinstance(e, SystemExit):
             raise e
         warn_tools.end_queue()
         traceback.print_exc()
@@ -36,7 +35,7 @@ def quiet_handler(function, *args, **kws):
         return ret
     except Exception as e:
         warn_tools.end_queue()
-        if isinstance(e, exceptions.SystemExit):
+        if isinstance(e, SystemExit):
             raise e
         type, value, tb = sys.exc_info()
         print(''.join(traceback.format_exception_only(type, value)))

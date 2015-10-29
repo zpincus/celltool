@@ -75,8 +75,7 @@ def main(name, arguments):
     matches = match_files.match_contours_and_images(args, options.match_by_name, options.show_progress)
     contours, image_names, unmatched_contours, unmatched_image_names = matches
     destination = path.path(options.destination)
-    if not destination.exists():
-        destination.makedirs()
+    destination.makedirs_p()
     if options.file_type is not None:
         new_names = [destination / contour.simple_name() + '.' + options.file_type for contour in contours]
     else:

@@ -547,10 +547,12 @@ def measure_contours(contours, show_progress = False, *measurements):
     return header, all_measurements
 
 class _ContourMeasurement(object):
-    def header(self, contours):
-        return [self._header]
-    def measure(self, contour):
-        return [self._method(contour)]
+    @classmethod
+    def header(cls, contours):
+        return [cls._header]
+    @classmethod
+    def measure(cls, contour):
+        return [cls._method(contour)]
 
 class Area(_ContourMeasurement):
     """Measure the areas of contours."""
@@ -569,24 +571,29 @@ class AlignmentAngle(_ContourMeasurement):
 
 class Centroid(object):
     """Measure the x, y centroid of contours"""
-    def header(self, contours):
+    @staticmethod
+    def header(contours):
         return ['x-centroid', 'y-centroid']
-    def measure(self, contour):
+    @staticmethod
+    def measure(contour):
         return list(contour.as_world().centroid())
 
 class Size(object):
     """Measure the x, y size of contours"""
-    def header(self, contours):
+    @staticmethod
+    def header(contours):
         return ['x-size', 'y-size']
-    def measure(self, contour):
+    @staticmethod
+    def measure(contour):
         return list(contour.size())
 
 class _CentralAxisMeasurement(_ContourMeasurement):
-    def header(self, contours):
+    @classmethod
+    def header(cls, contours):
         for contour in contours:
             if not isinstance(contour, contour_class.CentralAxisContour):
                 raise TypeError("A contour with a central axis defined is required for this measurement")
-        return [self._header]
+        return [cls._header]
 
 class AxisRMSD(_CentralAxisMeasurement):
     """Measure the deviation of the axis points from the baseline determined by
@@ -604,7 +611,8 @@ class RelativeAxisRMSD(_CentralAxisMeasurement):
     that contours with deviations only on one side of the baseline can be better
     compared with contours with deviations to both sides."""
     _header = 'Relative Axis RMSD'
-    def _method(self, contour):
+    @staticmethod
+    def _method(contour):
         rmsd = contour.axis_rmsd()
         baseline_length = numpy.sqrt(((contour.central_axis[0]-contour.central_axis[-1])**2).sum())
         return rmsd / baseline_length
@@ -616,6 +624,7 @@ class AxisPeakAmplitude(_CentralAxisMeasurement):
     only on one side of the baseline can be better compared with contours with
     deviations to both sides."""
     _header = 'Peak Axis Amplitude'
+    @staticmethod
     def _method(self, contour):
         distances = contour.axis_baseline_distances()
         distances -= distances.mean()
@@ -625,7 +634,8 @@ class AxisLengthRatio(_CentralAxisMeasurement):
     """Measure the ratio of the length of the axis to that of the axis baseline
     determined by its endpoints."""
     _header = 'Axis Length Ratio'
-    def _method(self, contour):
+    @staticmethod
+    def _method(contour):
         length = contour.axis_length()
         baseline_length = numpy.sqrt(((contour.central_axis[0]-contour.central_axis[-1])**2).sum())
         return length / baseline_length
@@ -633,7 +643,8 @@ class AxisLengthRatio(_CentralAxisMeasurement):
 class AxisWavelength(_CentralAxisMeasurement):
     """Measure the average "wavelength" of the central axis."""
     _header = 'Axis Wavelength'
-    def _method(self, contour):
+    @staticmethod
+    def _method(contour):
         max_width = contour.axis_diameters().max()
         return contour.axis_wavelength(min_distance=max_width/10.)
 
@@ -641,7 +652,8 @@ class AxisWavenumber(_CentralAxisMeasurement):
     """Measure the number of full oscillations of the central axis. Will be
     either an integer or an integral multiple of 0.5."""
     _header = 'Axis Wavenumber'
-    def _method(self, contour):
+    @staticmethod
+    def _method(contour):
         max_width = contour.axis_diameters().max()
         return len(contour.axis_extrema(min_distance=max_width/10.)) / 2.0 - 1
 
@@ -661,7 +673,8 @@ class _BoundedContourMeasurement(object):
         else:
             return [self._header + ' ' + '(from %d to %d)'%(self.begin+1, self.end+1)]
     def measure(self, contour):
-        return [self._method(contour, begin=self.begin, end=self.end)]
+        # look up _method on type(self) to retrieve unbound method, not method bound
+        return [type(self)._method(contour, begin=self.begin, end=self.end)]
 
 class PathLength(_BoundedContourMeasurement):
     """Measure the length of the contour from 'begin' to 'end'. These
@@ -687,7 +700,8 @@ class SideCurvature(object):
         self.end_1 = end_1
         self.begin_2 = begin_2
         self.end_2 = end_2
-    def header(self, contours):
+    @staticmethod
+    def header(contours):
         return ['Side Curvature']
     def measure(self, contour):
         return [contour.normalized_curvature(self.begin_1, self.end_1)+contour.normalized_curvature(self.begin_2, self.end_2)]
@@ -706,7 +720,8 @@ class AxisLength(_BoundedCentralAxisMeasurement):
 class AxisMeanDiameter(_BoundedCentralAxisMeasurement):
     """Measure the mean diameter of the cell along the axis points specified (endpoints excluded by default)"""
     _header = 'Mean Axis Diameter'
-    def _method(self, contour, begin, end):
+    @staticmethod
+    def _method(contour, begin, end):
         if begin is None:
             begin = 1
         if end is None:

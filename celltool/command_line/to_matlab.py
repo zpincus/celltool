@@ -1,13 +1,13 @@
 # Copyright 2007 Zachary Pincus
 # This file is part of CellTool.
-# 
+#
 # CellTool is free software; you can redistribute it and/or modify
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
 
 """Save contour data as Matlab-readable .mat files.
 
-The files will be saved with the same name as the contour files in the 
+The files will be saved with the same name as the contour files in the
 specified directory.
 
 """
@@ -38,8 +38,7 @@ def main(name, arguments):
     filenames = [path.path(arg) for arg in args]
     contours = simple_interface.load_contours(filenames, show_progress = options.show_progress)
     destination = path.path(options.destination)
-    if not destination.exists():
-        destination.makedirs()
+    destination.makedirs_p()
     # note that with path objects, the '/' operator means 'join path components.'
     names = [destination / filename.namebase + '.mat' for filename in filenames]
     simple_interface.save_contour_data_for_matlab(contours, names, options.show_progress)

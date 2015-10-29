@@ -46,7 +46,7 @@ def contours_from_image(image_array, contour_value = None, closed_only = True, m
     if axis_align:
         for a, c in areas_and_contours:
             c.axis_align()
-    areas_and_contours.sort()
+    areas_and_contours.sort(key=lambda ac: ac[0])
     return [c for a, c in areas_and_contours]
 
 def _should_allow_reverse(contours, allow_reflection):
