@@ -1,6 +1,6 @@
 # Copyright 2007 Zachary Pincus
 # This file is part of CellTool.
-# 
+#
 # CellTool is free software; you can redistribute it and/or modify
 # it under the terms of version 2 of the GNU General Public License as
 # published by the Free Software Foundation.
@@ -15,11 +15,11 @@ class CelltoolWarning(UserWarning):
 
 _warning_queue = []
 
-def _celltool_queuewarning(message, category, filename, lineno, file=sys.stderr):
+def _celltool_queuewarning(message, category, filename, lineno, file=sys.stderr, line=None):
     if issubclass(category, CelltoolWarning):
         _warning_queue.append('Warning: %s\n'%message)
     else:
-        _original_showwarning(message, category, filename, lineno, file)
+        _original_showwarning(message, category, filename, lineno, file, line)
 
 def queue_celltool_warnings():
     global _warning_queue

@@ -395,7 +395,7 @@ def _fit_contours(contours, points, plot_width, plot_height, scale, fix_xrange =
 
 def distribution_plot(data_groups, filename, axis_title = None, plot_title = None,
         colors = default_colors, names = None, axes_at_origin = True, plot_points = False,
- 	fix_xrange = (None, None), scale_factors = None):
+        fix_xrange = (None, None), scale_factors = None):
     """Plot the 1D distributions of several collections of points to a SVG file.
 
     The distributions of the 1D points in 'data_groups' are estimated with kernel
@@ -417,8 +417,8 @@ def distribution_plot(data_groups, filename, axis_title = None, plot_title = Non
         axes_at_origin -- if True, then the plot axes will intersect at the origin
             (or the nearest point to it in the data plot). Otherwise the axes will
             be at the bottom and left of the plot.
-	    plot_points -- if True, dots will be plotted at the location of each
-	        sample.
+        plot_points -- if True, dots will be plotted at the location of each
+            sample.
         fix_xrange, fix_yrange -- (min, max) tuples. If either or both values are
             None, then the best-fit range given the contours and their positions is
             chosen. Setting either or both forces the axis to have that minimum or
@@ -476,16 +476,16 @@ def distribution_plot(data_groups, filename, axis_title = None, plot_title = Non
     else:
         names = [name.replace(' ', '_') for name in names]
     if plot_points:
-    	point_radius = 0.005 * (data_xrange[1] - data_xrange[0])
-    	plot.style.add_selector('[class~="point"]', fill='black', stroke=None)
+        point_radius = 0.005 * (data_xrange[1] - data_xrange[0])
+        plot.style.add_selector('[class~="point"]', fill='black', stroke=None)
     for name, bezier, data_group, estimator, color in zip(names, beziers, data_groups, kd_estimators, itertools.cycle(colors)):
         plot.add_bezier(bezier, id=name, svg_class='data density', layer=name)
         plot.style.add_selector('[class~="density"][id="%s"]'%name, fill='none', stroke=color)
         plot.style.add_selector('[class~="legend"][id="%s"]'%name, fill='none', stroke=color)
         if plot_points:
-        	values = numpy.unique(data_group)
-        	for point in zip(values, estimator(values)):
-        	    plot.add_circle(point, point_radius, id=None, svg_class="data point", layer=name, in_data_coords=True)
+            values = numpy.unique(data_group)
+            for point in zip(values, estimator(values)):
+                plot.add_circle(point, point_radius, id=None, svg_class="data point", layer=name, in_data_coords=True)
     if legend:
         legend_x = _CANVAS_WIDTH - _PAD - 80
         legend_y = _FONT_SIZE_SMALL * plot_class._TOP_TO_BASELINE + _PAD

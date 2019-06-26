@@ -542,7 +542,7 @@ class Contour(PointSet):
         Returns the final RMSD between the points (as best ordered) and the reference points.
         """
         best_offset = 0
-        step = self.points.shape[0] / 2
+        step = self.points.shape[0] // 2
         while(True):
             d = self.as_offset_points(best_offset).rms_distance_from(reference)
             dp = self.as_offset_points(best_offset + 1).rms_distance_from(reference)
@@ -552,7 +552,7 @@ class Contour(PointSet):
             else: direction = -1
             best_offset += direction * step
             if step > 2:
-                step /= 2
+                step //= 2
             else:
                 step = 1
         self.offset_points(best_offset)
@@ -1025,7 +1025,7 @@ class CentralAxisContour(Contour):
             num_steps = len(scale_steps)
         except:
             num_steps = scale_steps
-            scale_steps = numpy.linspace(7, num_points, scale_steps, endpoint=True)
+            scale_steps = numpy.linspace(7, num_points, scale_steps, endpoint=True, dtype=int)
         from scipy.interpolate import fitpack
         tck, uout = contour.to_spline()
         start_pos, end_pos = numpy.transpose(fitpack.splev([start, end], tck))
@@ -1058,7 +1058,7 @@ class CentralAxisContour(Contour):
         if tck is None:
             tck, uout = self.to_spline()
         from scipy.interpolate import fitpack
-        n_pairs = (len(self.axis_positions)- 2) / 2
+        n_pairs = (len(self.axis_positions)- 2) // 2
         spatial_pos = numpy.transpose(fitpack.splev(self.axis_positions, tck))
         start_p = spatial_pos[0:1]
         self.top_points = spatial_pos[1:n_pairs+1]
@@ -1072,7 +1072,7 @@ class CentralAxisContour(Contour):
         self.central_axis = self.central_axis[::-1]
         self.top_points, self.bottom_points = self.bottom_points[::-1], self.top_points[::-1]
 
-    def estimate_axis_positions(self, axis, endpoints = None):
+    def estimate_axis_positions(self, axis, endpoints=None):
         axis_der = axis[2:] - axis[:-2]
         normals = numpy.empty(axis_der.shape)
         normals[:,0] = axis_der[:,1]
@@ -1112,7 +1112,7 @@ class CentralAxisContour(Contour):
              spacing_step=0.001, curvature_step=0.04, overlap_step=0.1, endpoint_step=0.001,
              record=False):
         tck, uout = self.to_spline()
-        n_pairs = (len(self.axis_positions)- 2) / 2
+        n_pairs = (len(self.axis_positions)- 2) // 2
         l = len(self.points)
         spatial_forces = numpy.zeros((len(self.axis_positions), 2), float)
         top_force = spatial_forces[1:n_pairs+1]
@@ -1261,8 +1261,78 @@ class CentralAxisContour(Contour):
         """Return the length of the axis, optionally within the inclusive range specified."""
         return self.axis_interpoint_distances()[begin:end].sum()
 
+    def axis_best_line(self):
+        """Return best-fit line parameters (slope, intercept) for the central
+        axis points."""
+        from scipy import stats
+        slope, intercept = stats.linregress(self.central_axis)[:2]
+        return slope, intercept
+
+    def axis_deviations(self):
+        """Return the central axis represented as positions along the best fit line
+        through the axis (the x-values) and signed distances away from that line
+        (the y-values).
+
+        Returns: start, end, points
+           start, end: endpoints of the best-fit line through the central axis
+           points: x-values are distances along this line, y-values are signed
+               distances from the line to the central axis points
+        """
+        a, b = self.axis_best_line()
+        x = self.central_axis[:,0]
+        xs = x.min()
+        xe = x.max()
+        ys = a*xs + b
+        ye = a*xe + b
+        start = numpy.array([xs, ys])
+        end = numpy.array([xe, ye])
+        y_out = utility_tools.signed_distances_to_line(self.central_axis, start, end)
+        closest_points, parameters = utility_tools.closest_points_to_line(self.central_axis, start, end)
+        total_distance = (((start - end)**2).sum())**0.5
+        x_out = parameters * total_distance
+        if x_out[0] > x_out[-1]:
+            x_out = x_out[::-1]
+            y_out = y_out[::-1]
+        return start, end, numpy.transpose([x_out, y_out])
+
+    def axis_sinusoid_fit(self):
+        """Fit a sinusoid function y = A*sin(2*pi/W * x + delta) to the
+        deviations from the central axis (calculated by axis_deviations).
+
+        A is the amplitude, W is the wavelength, and delta is the phase in
+        radians.
+
+        Returns: A, W, delta, x, y, y_fit, sse
+            where x and y are the coordinates of the axis deivations, y_fit is
+            the sinusoid fit, and sse is the sum of squared error between y and
+            y_fit.
+        """
+        import scipy.optimize as opt
+        def gen_sine(x, A, W, delta):
+            A = abs(A)
+            return A * numpy.sin((2*numpy.pi/W) * x + delta)
+
+        def ssd(a, b):
+            return ((a-b)**2).sum()
+
+        two_pi = 2*numpy.pi
+        start, end, positions = self.axis_deviations()
+        x, y = positions.T
+        A0 = y.ptp() / 2
+        W0 = self.axis_wavelength(min_distance=A0/3)
+        deltas = numpy.linspace(0, two_pi, 12, endpoint=False)
+        delta0 = deltas[numpy.argmin([ssd(y, gen_sine(x, A0, W0, d)) for d in deltas])]
+        params = (A0, W0, delta0)
+        (A, W, delta), cv = opt.curve_fit(gen_sine, x, y, params)
+        A = abs(A)
+        delta %= two_pi
+        if delta > numpy.pi:
+            delta -= two_pi
+        y_fit = gen_sine(x, A, W, delta)
+        return A, W, delta, x, y, y_fit, ssd(y, y_fit)
+
     def axis_interpoint_distances(self):
-        return    utility_tools.norm(self.central_axis[1:] - self.central_axis[:-1], axis = 0)
+        return utility_tools.norm(self.central_axis[1:] - self.central_axis[:-1], axis = 0)
 
     def axis_baseline_distances(self):
         """Return the distances from each point along the central axis to the

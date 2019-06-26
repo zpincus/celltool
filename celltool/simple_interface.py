@@ -657,6 +657,16 @@ class AxisWavenumber(_CentralAxisMeasurement):
         max_width = contour.axis_diameters().max()
         return len(contour.axis_extrema(min_distance=max_width/10.)) / 2.0 - 1
 
+class AxisSinusoidFit(_CentralAxisMeasurement):
+    @staticmethod
+    def header(contours):
+        return ['Fit Amplitude', 'Fit Wavelength', 'Fit SSE']
+
+    @staticmethod
+    def measure(contour):
+        A, W, delta, x, y, y_fit, sse = contour.axis_sinusoid_fit()
+        return [A, W, sse]
+
 class _BoundedContourMeasurement(object):
     def __init__(self, begin=None, end=None):
         """Note: begin and end are zero-indexed, but the header information is generated
