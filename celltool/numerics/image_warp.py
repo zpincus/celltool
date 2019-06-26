@@ -34,8 +34,8 @@ def warp_images(from_points, to_points, images, output_region, interpolation_ord
 def _make_inverse_warp(from_points, to_points, output_region, approximate_grid):
     x_min, y_min, x_max, y_max = output_region
     if approximate_grid is None: approximate_grid = 1
-    x_steps = (x_max - x_min) / approximate_grid
-    y_steps = (y_max - y_min) / approximate_grid
+    x_steps = (x_max - x_min) // approximate_grid
+    y_steps = (y_max - y_min) // approximate_grid
     x, y = numpy.mgrid[x_min:x_max:x_steps*1j, y_min:y_max:y_steps*1j]
 
     # make the reverse transform warping from the to_points to the from_points, because we
