@@ -71,7 +71,7 @@ def _get_contours_and_images(filenames, show_progress = True):
         try:
             freeimage.read_metadata(filename)
             image_names.append(filename)
-        except IOError as e:
+        except ValueError as e:
             # print e
             # print Image.ID
             try:
