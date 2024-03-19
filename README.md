@@ -36,9 +36,13 @@ An Anaconda [install guide](https://docs.anaconda.com/anaconda/install/) is avai
 
 Then open a terminal window. You should see `(base)` at the beginning of the prompt, which is an indication that you're in the Anaconda base environment. This means you will be using the Anaconda python tools when you type "python" or "pip" or whatnot. (To go back to the system python, type `conda deactivate`.)
 
-From there, just run:
+Advanced use: if you want to have a separate conda environment for celltool, then run the following to install the basic dependencies:
+    conda install -n celltool python numpy scipy
+    conda activate celltool
 
-    pip install git+https://github.com/zplab/freeimage-py git+https://github.com/zpincus/celltool
+From there (either in the `base` or `celltool` environment if you prefer the latter), just run:
+
+    pip install git+https://github.com/zpincus/freeimage-py git+https://github.com/zpincus/celltool
 
 (all one line), which will install Celltool and its dependency, Freeimage.
 
