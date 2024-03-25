@@ -884,12 +884,10 @@ class Path(text_type):
                 translated to ``'\n'``.  If ``False``, newline characters are
                 stripped off.  Default is ``True``.
 
-        This uses ``'U'`` mode.
-
         .. seealso:: :meth:`text`
         """
         if encoding is None and retain:
-            with self.open('U') as f:
+            with self.open('r') as f:
                 return f.readlines()
         else:
             return self.text(encoding, errors).splitlines(retain)

@@ -79,7 +79,7 @@ class DataFile(object):
         """
         self.type_hierarchy = type_hierarchy
         self.type_dict = type_dict
-        f = open(filename, 'rU')
+        f = open(filename, 'r')
         self.lines = f.read()
         f.close()
         dialect = csv.Sniffer().sniff(self.lines, ['\t', ',', ';', ' '])
