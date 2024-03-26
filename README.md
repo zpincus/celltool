@@ -38,7 +38,7 @@ Then open a terminal window. You should see `(base)` at the beginning of the pro
 
 Advanced use: if you want to have a separate conda environment for celltool, then run the following to install the basic dependencies:
 
-    conda install -n celltool python numpy scipy
+    conda install -n celltool python numpy scipy scikit-image
     conda activate celltool
 
 From there (either in the `base` or `celltool` environment if you prefer the latter), just run:
@@ -160,7 +160,7 @@ There are many other measurements available; consult `celltool measure_contours 
 
 Let's now measure the rest of the bacterial conditions:
 
-    celltool measure_contours --output-file="double.csv" --area --centroid --shape-modes AllModel.contour 1 2 - Aligned/Double*.contourz
+    celltool measure_contours --output-file="double.csv" --area --centroid --shape-modes AllModel.contour 1 2 - Aligned/Double*.contour
     celltool measure_contours --output-file="FtsZ-.csv" --area --centroid --shape-modes AllModel.contour 1 2 - Aligned/FtsZ-*.contour
     celltool measure_contours --output-file="MreB-.csv" --area --centroid --shape-modes AllModel.contour 1 2 - Aligned/MreB-*.contour
 
