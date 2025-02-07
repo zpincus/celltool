@@ -38,7 +38,7 @@ Then open a terminal window. You should see `(base)` at the beginning of the pro
 
 Advanced use: if you want to have a separate conda environment for celltool, then run the following to install the basic dependencies:
 
-    conda install -n celltool python numpy scipy scikit-image
+    conda create -n celltool python numpy scipy scikit-image
     conda activate celltool
 
 From there (either in the `base` or `celltool` environment if you prefer the latter), just run:
