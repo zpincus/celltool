@@ -370,7 +370,7 @@ def _fit_contours(contours, points, plot_width, plot_height, scale, fix_xrange =
         if iters > 25:
             warn_tools.warn('Could not fit the given shapes to the given plot bounds. There will be some overlap.')
             break
-        data_width, data_height = data_xrange.ptp(), data_yrange.ptp()
+        data_width, data_height = numpy.ptp(data_xrange), numpy.ptp(data_yrange)
         scaling = numpy.array([plot_width / data_width, plot_height / data_height])
         world_points = (points - [data_xrange[0], data_yrange[0]]) * scaling
         max_points = (world_points + contour_halves).max(axis = 0)
@@ -428,7 +428,7 @@ def distribution_plot(data_groups, filename, axis_title = None, plot_title = Non
     """
     from scipy.interpolate import fitpack
     data_groups = [numpy.asarray(data_group, dtype=numpy.float32) for data_group in data_groups]
-    if not numpy.alltrue([data_group.ndim == 1 for data_group in data_groups]):
+    if not numpy.all([data_group.ndim == 1 for data_group in data_groups]):
         raise ValueError('Can only plot distributions in one dimension.')
     data_groups = [numpy.asarray(data_group) for data_group in data_groups]
     data_ranges = [(g.min(), g.max()) for g in data_groups]
@@ -567,7 +567,7 @@ def pca_modes_plot(pca_contour, filename, modes = None, positions = None,
         positions = numpy.asarray(positions)
     mode_contours = _get_mode_contours(pca_contour, modes, positions)
     bounds = [_find_bounds(contours) for contours in mode_contours]
-    sizes = numpy.array([b.ptp(axis = 0) for b in bounds])
+    sizes = numpy.array([numpy.ptp(b, axis = 0) for b in bounds])
     width = sizes[:,0].sum()
     height = sizes[:,1].max()
     if len(modes) > 1:
@@ -814,7 +814,7 @@ def point_order_plot(contours, filename, plot_title = None, label_points = True,
 
 def _check_units(contours):
     units = [contour.units for contour in contours]
-    if not numpy.alltrue([u == units[0] for u in units]):
+    if not numpy.all([u == units[0] for u in units]):
         raise ValueError('All contours must have the same units in order to plot them on the same axes.')
     units = units[0]
     return units

@@ -9,5 +9,5 @@ celltool.plot
 celltool.utility
 '''.strip().split()
 
-distutils.core.setup(name='celltool', version='2.0', description='celltool package',
+distutils.core.setup(name='celltool', version='2.1', description='celltool package',
     packages=packages, scripts=['celltool/command_line/celltool'])

@@ -79,7 +79,7 @@ def flatten_data(data):
     data_count = data.shape[0]
     data_point_shape = data.shape[1:]
     if len(data.shape) > 1:
-        flat = numpy.reshape(data, (data_count, numpy.product(data_point_shape)))
+        flat = numpy.reshape(data, (data_count, numpy.prod(data_point_shape)))
     else:
         flat = numpy.atleast_2d(data).transpose()
     return flat, data_point_shape

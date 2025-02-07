@@ -205,7 +205,7 @@ class PointSet(object):
         file_contents = ['cls = ("%s", "%s")\n'%(self.__class__.__module__, self.__class__.__name__)]
         for var_name in self._instance_data:
             file_contents.append('%s = \\'%var_name)
-            file_contents.append(repr(getattr(self, var_name, None)))
+            file_contents.append(repr(getattr(self, var_name, None)).replace('np.', ''))  # remove any np. prefixes since on load we use the numpy namespace
             file_contents.append('\n')
         file_contents = '\n'.join(file_contents)
         try:
@@ -408,7 +408,7 @@ class Contour(PointSet):
 
     def _make_acyclic(self):
         """If the contour is cyclic (last point == first point), strip the last point off."""
-        if numpy.alltrue(self.points[-1] == self.points[0]):
+        if numpy.all(self.points[-1] == self.points[0]):
             self.points = numpy.resize(self.points, [self.points.shape[0] - 1, self.points.shape[1]])
 
     def offset_points(self, offset):
@@ -905,11 +905,11 @@ class PCAContour(Contour):
         if not utility_tools.all_same_shape(data):
             raise ValueError('All contours must have the same number of points in order to perform PCA.')
         units = [c.units for c in contours]
-        if not numpy.alltrue([u == units[0] for u in units]):
+        if not numpy.all([u == units[0] for u in units]):
             raise ValueError('All contours must have the same units in order to produce a PCA shape model from them.')
         units = units[0]
         scales = [utility_tools.decompose_homogenous_transform(c.to_world_transform)[1] for c in contours]
-        if numpy.alltrue([numpy.allclose(scales[0], s) for s in scales[1:]]):
+        if numpy.all([numpy.allclose(scales[0], s) for s in scales[1:]]):
             transform = utility_tools.make_homogenous_transform(transform=scales[0])
         else:
             transform = numpy.eye(3)
@@ -1318,7 +1318,7 @@ class CentralAxisContour(Contour):
         two_pi = 2*numpy.pi
         start, end, positions = self.axis_deviations()
         x, y = positions.T
-        A0 = y.ptp() / 2
+        A0 = numpy.ptp(y) / 2
         W0 = self.axis_wavelength(min_distance=A0/3)
         deltas = numpy.linspace(0, two_pi, 12, endpoint=False)
         delta0 = deltas[numpy.argmin([ssd(y, gen_sine(x, A0, W0, d)) for d in deltas])]
@@ -1529,15 +1529,15 @@ def calculate_mean_contour(contours):
         raise ContourError('Cannot calculate mean of contours with different numbers of points.')
     mean_points = numpy.mean(all_points, axis=0)
     units = [c.units for c in contours]
-    if not numpy.alltrue([u == units[0] for u in units]):
+    if not numpy.all([u == units[0] for u in units]):
         raise ContourError('All contours must have the same units in order calculate their mean.')
     units = contours[0].units
     scales = [utility_tools.decompose_homogenous_transform(c.to_world_transform)[1] for c in contours]
-    if numpy.alltrue([numpy.allclose(scales[0], s) for s in scales[1:]]):
+    if numpy.all([numpy.allclose(scales[0], s) for s in scales[1:]]):
         transform = utility_tools.make_homogenous_transform(transform=scales[0])
     else:
         transform = numpy.eye(3)
-    if numpy.alltrue([isinstance(c, ContourAndLandmarks) for c in contours]):
+    if numpy.all([isinstance(c, ContourAndLandmarks) for c in contours]):
         # if they're all landmark'd contours
         all_landmarks = [c.landmarks for c in contours]
         if not utility_tools.all_same_shape(all_landmarks):

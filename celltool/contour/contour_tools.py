@@ -25,7 +25,7 @@ def contours_from_image(image_array, contour_value = None, closed_only = True, m
     """
     from skimage import measure
     if contour_value is None:
-        contour_value = image_array.ptp() / 2.0 + image_array.min()
+        contour_value = numpy.ptp(image_array) / 2.0 + image_array.min()
     contour_points = measure.find_contours(image_array, contour_value)
     if closed_only:
         contour_points = [p for p in contour_points if numpy.allclose(p[-1], p[0])]
@@ -59,13 +59,13 @@ def _should_allow_reverse(contours, allow_reflection):
     if allow_reflection:
          return True
     orientations = numpy.array([numpy.sign(contour.signed_area()) for contour in contours])
-    homogenous_orientations = numpy.alltrue(orientations == -1) or numpy.alltrue(orientations == 1)
+    homogenous_orientations = numpy.all(orientations == -1) or numpy.all(orientations == 1)
     return not homogenous_orientations
 
 def _compatibility_check(contours):
     if not utility_tools.all_same_shape([c.points for c in contours]):
         raise RuntimeError('All contours must have the same number of points in order to align them.')
-    if numpy.alltrue([isinstance(c, contour_class.ContourAndLandmarks) for c in contours]):
+    if numpy.all([isinstance(c, contour_class.ContourAndLandmarks) for c in contours]):
         # if they're all landmark'd contours
         all_landmarks = [c.landmarks for c in contours]
         if not utility_tools.all_same_shape(all_landmarks):
@@ -525,7 +525,7 @@ def warp_images(from_contour, to_contour, image_arrays, output_region = None,
         # center the to_contour bounding box in the middle of the output images, and
         # descale it to be in pixel units
         to_contour = to_contour.as_descaled()
-        center = numpy.array([output_region[:2],output_region[2:]], dtype = float).ptp(axis=0) / 2
+        center = numpy.ptp(numpy.array([output_region[:2],output_region[2:]], dtype = float), axis=0) / 2
         to_contour.recenter_bounds(center)
     if from_type == 'original':
         # put the from_contour in world units

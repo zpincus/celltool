@@ -69,14 +69,14 @@ class Plot(object):
         self.canvas_height = canvas_height
         world_xrange = numpy.array([left_pad, canvas_width - left_pad - right_pad], dtype=float)
         world_yrange = numpy.array([top_pad, canvas_height - top_pad - bottom_pad], dtype=float)
-        world_width = world_xrange.ptp()
-        world_height = world_yrange.ptp()
+        world_width = numpy.ptp(world_xrange)
+        world_height = numpy.ptp(world_yrange)
         if equal_axis_spacing:
             data_xrange, data_yrange = _equal_aspect_ranges(data_xrange, data_yrange, world_width / float(world_height))
         self.data_xrange = data_xrange
         self.data_yrange = data_yrange
-        data_width = numpy.asarray(data_xrange, dtype=float).ptp()
-        data_height = numpy.asarray(data_yrange, dtype=float).ptp()
+        data_width = numpy.ptp(numpy.asarray(data_xrange, dtype=float))
+        data_height = numpy.ptp(numpy.asarray(data_yrange, dtype=float))
         self.data_to_world_scaling = numpy.array([world_width / data_width, world_height / data_height])
         self.world_min = numpy.array([world_xrange[0], world_yrange[1]])
         self.data_min = numpy.array([data_xrange[0], data_yrange[0]])
@@ -417,7 +417,7 @@ def _find_tic_interval(low, high):
 
 def _equal_aspect_ranges(data_xrange, data_yrange, target_aspect):
     data_xrange, data_yrange = numpy.asarray(data_xrange, dtype=float), numpy.asarray(data_yrange, dtype=float)
-    data_width, data_height = data_xrange.ptp(), data_yrange.ptp()
+    data_width, data_height = numpy.ptp(data_xrange), numpy.ptp(data_yrange)
     data_aspect = data_width / data_height
     if data_aspect > target_aspect:
         # need to expand the y-range to decrease the aspect ratio

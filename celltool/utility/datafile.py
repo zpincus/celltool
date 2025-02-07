@@ -90,7 +90,7 @@ class DataFile(object):
         self.data = []
         self.types = []
         for row in reader:
-            if skip_empty and len(row) == 0 or numpy.alltrue([len(elem) == 0 for elem in row]):
+            if skip_empty and len(row) == 0 or numpy.all([len(elem) == 0 for elem in row]):
                 continue
             row_values, row_types = self._coerce(row)
             self.data.append(row_values)

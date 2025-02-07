@@ -163,7 +163,7 @@ def main(name, arguments):
             else:
                 options.y_title = options.y_column
         contour_groups = get_contour_groups(data_ranges, contours, data_files, row_ranges, options.name_column, options.x_column, options.y_column)
-        if numpy.alltrue([len(cg)==0 for cg in contour_groups]):
+        if numpy.all([len(cg)==0 for cg in contour_groups]):
             raise RuntimeError('No contours found for data rows specified (perhaps the names mismatch or there were no data rows?).')
         plot_tools.contour_scatterplot(contour_groups, options.output_file, options.scale,
             (options.x_title, options.y_title), options.title, names=data_names, 
@@ -220,7 +220,7 @@ def get_contour_groups(data_ranges, contours, data_files, row_ranges, name_colum
             raise ValueError('Cannot find specified columns in data file "%s".'%data_file)
         contour_and_points = []
         for i, row in zip(row_range, data_range):
-            if numpy.alltrue([r == None for r in row]):
+            if numpy.all([r == None for r in row]):
                 continue
             contour_name, x, y = row[name_column], row[x_column], row[y_column]
             if not contour_name:
